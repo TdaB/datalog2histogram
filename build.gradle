@@ -14,11 +14,6 @@ repositories {
     mavenCentral()
 }
 
-tasks.startScripts.enabled = false
-tasks.installDist.enabled = false
-//tasks.distZip.enabled = false
-tasks.distTar.enabled = false
-
 dependencies {
     implementation 'org.slf4j:slf4j-api:1.7.32'
     implementation 'org.slf4j:slf4j-log4j12:1.7.32'
