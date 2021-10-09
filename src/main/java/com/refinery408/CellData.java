@@ -4,9 +4,9 @@ package com.refinery408;
 import java.awt.Color;
 
 public class CellData {
-    private Double neutralValue;
-    private Double highValue;
-    private Double lowValue;
+    private final Double neutralValue;
+    private final Double highValue;
+    private final Double lowValue;
     private Double average;
     private int hits = 0;
 
@@ -14,12 +14,6 @@ public class CellData {
         this.neutralValue = neutralValue;
         this.highValue = highValue;
         this.lowValue = lowValue;
-    }
-
-    public CellData(Double neutralValue, Double highValue, Double lowValue, Double average) {
-        this.highValue = highValue;
-        this.lowValue = lowValue;
-        this.average = average;
     }
 
     public void updateAverage(double value) {

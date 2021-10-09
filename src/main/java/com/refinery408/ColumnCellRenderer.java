@@ -6,8 +6,10 @@ import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.Color;
 import java.awt.Component;
 
+import static com.refinery408.ColorUtils.invert;
+
 public class ColumnCellRenderer extends DefaultTableCellRenderer {
-    private Color[][] colors;
+    private final Color[][] colors;
 
     public ColumnCellRenderer(Color[][] colors) {
         this.colors = colors;
@@ -32,10 +34,5 @@ public class ColumnCellRenderer extends DefaultTableCellRenderer {
             l.setForeground(invert(c));
         }
         return l;
-    }
-
-    private static Color invert(Color c) {
-        if (c == null) return null;
-        return new Color(255 - c.getRed(), 255 - c.getGreen(), 255 - c.getBlue());
     }
 }

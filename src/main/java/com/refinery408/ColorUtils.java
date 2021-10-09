@@ -5,6 +5,11 @@ import java.awt.Color;
 import static java.lang.Math.pow;
 
 public class ColorUtils {
+    public static Color invert(Color c) {
+        if (c == null) return null;
+        return new Color(255 - c.getRed(), 255 - c.getGreen(), 255 - c.getBlue());
+    }
+
     public static Color interpolate(Color c1, Color c2, float fraction) {
         if (fraction <= 0) {
             return c1;
