@@ -144,6 +144,7 @@ public class App {
         lowPanel.add(this.lowText);
 
         this.button = new JButton("Generate Histogram");
+        this.button.setMnemonic(KeyEvent.VK_G);
         this.button.addActionListener(e -> {
             JPanel newTablePanel;
             try {
@@ -233,6 +234,9 @@ public class App {
             this.yCombo.setSelectedIndex(1);
             this.zCombo.setModel(new DefaultComboBoxModel<>(this.parser.getColumns().toArray(new String[0])));
             this.zCombo.setSelectedIndex(2);
+            this.neutralText.setText("0");
+            this.highText.setText("");
+            this.lowText.setText("");
 
             this.configPanel.setVisible(true);
 
@@ -280,12 +284,12 @@ public class App {
                 return joiner.toString();
             }
         };
-        table.setRowHeight(50);
+        table.setRowHeight(30);
         ColumnCellRenderer cellRenderer = new ColumnCellRenderer(tableModel.getColors());
         for (Enumeration<TableColumn> e = table.getColumnModel().getColumns(); e.hasMoreElements();) {
             e.nextElement().setCellRenderer(cellRenderer);
         }
-        table.setFont(new Font("Monospaced", Font.BOLD, 40));
+        table.setFont(new Font("Monospaced", Font.BOLD, 30));
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setRowHeaderView(buildRowHeader(table));
         JPanel tablePanel = new JPanel(new BorderLayout());
@@ -339,26 +343,26 @@ public class App {
         return null;
     }
 
-    private JList buildRowHeader(final JTable table) {
-        final JList rowHeader = new JList(new AbstractListModel() {
+    private JList<Double> buildRowHeader(final JTable table) {
+        final JList<Double> rowHeader = new JList<>(new AbstractListModel<Double>() {
             public int getSize() {
                 return parser.getyValues().size();
             }
 
-            public Object getElementAt(int index) {
-                return parser.getyValues().toArray()[index];
+            public Double getElementAt(int index) {
+                return parser.getyValues().toArray(new Double[0])[index];
             }
         });
         rowHeader.setOpaque(false);
-        rowHeader.setFixedCellWidth(80);
+        rowHeader.setFixedCellWidth(60);
         rowHeader.setCellRenderer(new RowHeaderRenderer(table));
         rowHeader.setBackground(table.getBackground());
         rowHeader.setForeground(table.getForeground());
         return rowHeader;
     }
 
-    static class RowHeaderRenderer extends JLabel implements ListCellRenderer {
-        private JTable table;
+    static class RowHeaderRenderer extends JLabel implements ListCellRenderer<Double> {
+        private final JTable table;
 
         RowHeaderRenderer(JTable table) {
             this.table = table;
@@ -373,8 +377,8 @@ public class App {
         }
 
         @Override
-        public Component getListCellRendererComponent(JList list,
-                                                      Object value,
+        public Component getListCellRendererComponent(JList<? extends Double> list,
+                                                      Double value,
                                                       int index,
                                                       boolean isSelected,
                                                       boolean cellHasFocus) {
