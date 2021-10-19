@@ -15,11 +15,11 @@ public class CellData {
         this.lowValue = lowValue;
     }
 
-    public void updateAverage(double value) {
+    public void updateAverage(double value, double frac) {
         if (this.hits == 0) {
             this.average = value;
         } else {
-            this.average += ((value - this.average) / (this.hits + 1));
+            this.average += frac * ((value - this.average) / (this.hits + 1));
         }
         this.hits += 1;
     }

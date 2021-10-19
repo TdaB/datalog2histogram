@@ -105,26 +105,30 @@ public class CSVParser {
                 double z = Double.parseDouble(parts[zIndex]);
 
                 double binnedX = 0;
+                double xFrac = 0;
                 for (double val : this.getxValues()) {
-                    if (Math.abs(x - val) < this.xWidth / 2) {
+                    if (Math.abs(x - val) <= this.xWidth / 2) {
                         binnedX = val;
+                        xFrac = 1 - (Math.abs(x - val) / (this.xWidth / 2));
                         break;
                     }
                 }
                 double binnedY = 0;
+                double yFrac = 0;
                 for (double val : this.getyValues()) {
-                    if (Math.abs(y - val) < this.yWidth / 2) {
+                    if (Math.abs(y - val) <= this.yWidth / 2) {
                         binnedY = val;
+                        yFrac = 1 - (Math.abs(y - val) / (this.yWidth / 2));
                         break;
                     }
                 }
-
+                double frac = .5 * xFrac + .5 * yFrac;
                 Point p = new Point(binnedX, binnedY);
                 if (this.table.containsKey(p)) {
-                    this.table.get(p).updateAverage(z);
+                    this.table.get(p).updateAverage(z, frac);
                 } else {
                     CellData data = new CellData(neutral, high, low);
-                    data.updateAverage(z);
+                    data.updateAverage(z, frac);
                     this.table.put(p, data);
                 }
             }
