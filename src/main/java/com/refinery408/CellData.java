@@ -1,6 +1,5 @@
 package com.refinery408;
 
-
 import java.awt.Color;
 
 public class CellData {
@@ -20,7 +19,7 @@ public class CellData {
         if (this.hits == 0) {
             this.average = value;
         } else {
-            this.average = this.average + ((value - this.average) / (this.hits + 1));
+            this.average += ((value - this.average) / (this.hits + 1));
         }
         this.hits += 1;
     }

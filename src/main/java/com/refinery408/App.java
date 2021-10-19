@@ -172,18 +172,19 @@ public class App {
         });
         this.button.setEnabled(false);
 
+        int configRowSpacing = config.getInt("config.spacing.row");
         this.configPanel.add(xPanel);
-        this.configPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        this.configPanel.add(Box.createRigidArea(new Dimension(0, configRowSpacing)));
         this.configPanel.add(yPanel);
-        this.configPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        this.configPanel.add(Box.createRigidArea(new Dimension(0, configRowSpacing)));
         this.configPanel.add(zPanel);
-        this.configPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        this.configPanel.add(Box.createRigidArea(new Dimension(0, configRowSpacing)));
         this.configPanel.add(neutralPanel);
-        this.configPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        this.configPanel.add(Box.createRigidArea(new Dimension(0, configRowSpacing)));
         this.configPanel.add(highPanel);
-        this.configPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        this.configPanel.add(Box.createRigidArea(new Dimension(0, configRowSpacing)));
         this.configPanel.add(lowPanel);
-        this.configPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        this.configPanel.add(Box.createRigidArea(new Dimension(0, configRowSpacing)));
         this.configPanel.add(button);
         this.configPanel.setVisible(false);
 
@@ -228,11 +229,11 @@ public class App {
                                                   JOptionPane.ERROR_MESSAGE);
                 }
             }
-            this.xCombo.setModel(new DefaultComboBoxModel<>(this.parser.getColumns().toArray(new String[0])));
+            this.xCombo.setModel(new DefaultComboBoxModel<>(this.parser.getColumnNames().toArray(new String[0])));
             this.xCombo.setSelectedIndex(0);
-            this.yCombo.setModel(new DefaultComboBoxModel<>(this.parser.getColumns().toArray(new String[0])));
+            this.yCombo.setModel(new DefaultComboBoxModel<>(this.parser.getColumnNames().toArray(new String[0])));
             this.yCombo.setSelectedIndex(1);
-            this.zCombo.setModel(new DefaultComboBoxModel<>(this.parser.getColumns().toArray(new String[0])));
+            this.zCombo.setModel(new DefaultComboBoxModel<>(this.parser.getColumnNames().toArray(new String[0])));
             this.zCombo.setSelectedIndex(2);
             this.neutralText.setText("0");
             this.highText.setText("");
