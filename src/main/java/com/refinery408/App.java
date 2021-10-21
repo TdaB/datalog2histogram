@@ -64,27 +64,6 @@ public class App {
     private JTextField yMaxText;
     private JTextField ySpacingText;
 
-    class ComboListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            button.setEnabled(readyToGenerate());
-        }
-    }
-
-    class TextFieldListener implements KeyListener {
-        @Override
-        public void keyTyped(KeyEvent keyEvent) {
-        }
-
-        @Override
-        public void keyPressed(KeyEvent keyEvent) {
-        }
-
-        @Override
-        public void keyReleased(KeyEvent keyEvent) {
-            button.setEnabled(readyToGenerate());
-        }
-    }
-
     public App() {
         this.configPanel = new JPanel();
         this.configPanel.setLayout(new BoxLayout(this.configPanel, BoxLayout.PAGE_AXIS));
@@ -95,38 +74,7 @@ public class App {
         this.button = new JButton("Generate Histogram");
         this.button.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.button.setMnemonic(KeyEvent.VK_G);
-        this.button.addActionListener(e -> {
-            // We know all input has been checked
-            JPanel newTablePanel;
-            try {
-                Double neutral = this.neutralText.getText().isEmpty() ? null : Double.valueOf(this.neutralText.getText());
-                Double high = this.highText.getText().isEmpty() ? null : Double.valueOf(this.highText.getText());
-                Double low = this.lowText.getText().isEmpty() ? null : Double.valueOf(this.lowText.getText());
-                newTablePanel = this.generateTablePanel(
-                        (String) this.xCombo.getSelectedItem(),
-                        (String) this.yCombo.getSelectedItem(),
-                        (String) this.zCombo.getSelectedItem(),
-                        neutral,
-                        high,
-                        low,
-                        Double.parseDouble(this.xMinText.getText()),
-                        Double.parseDouble(this.xMaxText.getText()),
-                        Integer.parseInt(this.xSpacingText.getText()),
-                        Double.parseDouble(this.yMinText.getText()),
-                        Double.parseDouble(this.yMaxText.getText()),
-                        Integer.parseInt(this.ySpacingText.getText()));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                return;
-            }
-            if (this.tablePanel != null) {
-                this.mainPanel.remove(this.tablePanel);
-            }
-            this.mainPanel.add(newTablePanel);
-            this.tablePanel = newTablePanel;
-            this.mainPanel.revalidate();
-            this.mainPanel.repaint();
-        });
+        this.button.addActionListener(new GenerateButtonListener());
         this.button.setEnabled(false);
 
         int configRowSpacing = config.getInt("config.spacing.row");
@@ -152,7 +100,6 @@ public class App {
         this.frame.setTitle("Da Bomb Histogram");
         this.frame.setPreferredSize(new Dimension(config.getInt("window.width"),
                                                   config.getInt("window.height")));
-        this.frame.setLocation(100, 100);
         this.frame.pack();
         this.frame.setVisible(true);
     }
@@ -427,6 +374,62 @@ public class App {
         rowHeader.setBackground(table.getBackground());
         rowHeader.setForeground(table.getForeground());
         return rowHeader;
+    }
+
+    class ComboListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            button.setEnabled(readyToGenerate());
+        }
+    }
+
+    class TextFieldListener implements KeyListener {
+        @Override
+        public void keyTyped(KeyEvent keyEvent) {
+        }
+
+        @Override
+        public void keyPressed(KeyEvent keyEvent) {
+        }
+
+        @Override
+        public void keyReleased(KeyEvent keyEvent) {
+            button.setEnabled(readyToGenerate());
+        }
+    }
+
+    class GenerateButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            // We know all input has been checked
+            JPanel newTablePanel;
+            try {
+                Double neutral = neutralText.getText().isEmpty() ? null : Double.valueOf(neutralText.getText());
+                Double high = highText.getText().isEmpty() ? null : Double.valueOf(highText.getText());
+                Double low = lowText.getText().isEmpty() ? null : Double.valueOf(lowText.getText());
+                newTablePanel = generateTablePanel(
+                        (String) xCombo.getSelectedItem(),
+                        (String) yCombo.getSelectedItem(),
+                        (String) zCombo.getSelectedItem(),
+                        neutral,
+                        high,
+                        low,
+                        Double.parseDouble(xMinText.getText()),
+                        Double.parseDouble(xMaxText.getText()),
+                        Integer.parseInt(xSpacingText.getText()),
+                        Double.parseDouble(yMinText.getText()),
+                        Double.parseDouble(yMaxText.getText()),
+                        Integer.parseInt(ySpacingText.getText()));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                return;
+            }
+            if (tablePanel != null) {
+                mainPanel.remove(tablePanel);
+            }
+            mainPanel.add(newTablePanel);
+            tablePanel = newTablePanel;
+            mainPanel.revalidate();
+            mainPanel.repaint();
+        }
     }
 
     public static void main(String[] args) {
