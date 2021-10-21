@@ -25,8 +25,6 @@ public class CSVParser {
     private Map<Point, CellData> table;
     private Set<Double> xValues = new TreeSet<>();
     private Set<Double> yValues = new TreeSet<>(Comparator.reverseOrder());
-    private double xWidth = config.getDouble("table.axis.xwidth");;
-    private double yWidth = config.getDouble("table.axis.ywidth");;
 
     public CSVParser(String filePath) throws Exception {
         this(filePath, "\t");
@@ -39,22 +37,6 @@ public class CSVParser {
         this.filePath = filePath;
         this.delimiter = delimiter;
         this.parseHeader();
-        this.getAxisData();
-    }
-    
-    private void getAxisData() {
-        double xMin = config.getDouble("table.axis.xmin");
-        double xMax = config.getDouble("table.axis.xmax");
-        double yMin = config.getDouble("table.axis.ymin");
-        double yMax = config.getDouble("table.axis.ymax");
-
-        for (double x = xMin; x <= xMax; x += this.xWidth) {
-            this.xValues.add(x);
-        }
-
-        for (double y = yMin; y <= yMax; y += this.yWidth) {
-            this.yValues.add(y);
-        }
     }
 
     private void parseHeader() throws Exception {
@@ -86,8 +68,29 @@ public class CSVParser {
         return columnNames;
     }
 
-    protected void parseCsv(String xAxis, String yAxis, String zAxis, Double neutral, Double high, Double low) throws Exception {
+    protected void parseCsv(String xAxis,
+                            String yAxis,
+                            String zAxis,
+                            Double neutral,
+                            Double high,
+                            Double low,
+                            Double xMin,
+                            Double xMax,
+                            int xSpacing,
+                            Double yMin,
+                            Double yMax,
+                            int ySpacing) throws Exception {
         this.table = new HashMap<>();
+        this.xValues = new TreeSet<>();
+        this.yValues = new TreeSet<>(Comparator.reverseOrder());
+
+        for (double x = xMin; x <= xMax; x += xSpacing) {
+            this.xValues.add(x);
+        }
+        for (double y = yMin; y <= yMax; y += ySpacing) {
+            this.yValues.add(y);
+        }
+
         int xIndex = this.columnNames.indexOf(xAxis);
         int yIndex = this.columnNames.indexOf(yAxis);
         int zIndex = this.columnNames.indexOf(zAxis);
@@ -107,18 +110,18 @@ public class CSVParser {
                 double binnedX = 0;
                 double xFrac = 0;
                 for (double val : this.getxValues()) {
-                    if (Math.abs(x - val) <= this.xWidth / 2) {
+                    if (Math.abs(x - val) <= xSpacing / 2) {
                         binnedX = val;
-                        xFrac = 1 - (Math.abs(x - val) / (this.xWidth / 2));
+                        xFrac = 1 - (Math.abs(x - val) / (xSpacing / 2));
                         break;
                     }
                 }
                 double binnedY = 0;
                 double yFrac = 0;
                 for (double val : this.getyValues()) {
-                    if (Math.abs(y - val) <= this.yWidth / 2) {
+                    if (Math.abs(y - val) <= ySpacing / 2) {
                         binnedY = val;
-                        yFrac = 1 - (Math.abs(y - val) / (this.yWidth / 2));
+                        yFrac = 1 - (Math.abs(y - val) / (ySpacing / 2));
                         break;
                     }
                 }
