@@ -91,9 +91,7 @@ public class App {
         this.configPanel.setMaximumSize(new Dimension(config.getInt("config.width"),
                                                       config.getInt("config.height")));
         this.configPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-
-
+        
         this.button = new JButton("Generate Histogram");
         this.button.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.button.setMnemonic(KeyEvent.VK_G);
