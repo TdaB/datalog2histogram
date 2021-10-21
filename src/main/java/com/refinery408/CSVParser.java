@@ -110,18 +110,18 @@ public class CSVParser {
                 double binnedX = 0;
                 double xFrac = 0;
                 for (double val : this.getxValues()) {
-                    if (Math.abs(x - val) <= xSpacing / 2) {
+                    if (Math.abs(x - val) <= .5 * xSpacing) {
                         binnedX = val;
-                        xFrac = 1 - (Math.abs(x - val) / (xSpacing / 2));
+                        xFrac = 1 - (Math.abs(x - val) / (.5 * xSpacing));
                         break;
                     }
                 }
                 double binnedY = 0;
                 double yFrac = 0;
                 for (double val : this.getyValues()) {
-                    if (Math.abs(y - val) <= ySpacing / 2) {
+                    if (Math.abs(y - val) <= .5 * ySpacing) {
                         binnedY = val;
-                        yFrac = 1 - (Math.abs(y - val) / (ySpacing / 2));
+                        yFrac = 1 - (Math.abs(y - val) / (.5 * ySpacing));
                         break;
                     }
                 }
