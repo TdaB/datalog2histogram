@@ -92,35 +92,7 @@ public class App {
                                                       config.getInt("config.height")));
         this.configPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JPanel zPanel = new JPanel();
-        zPanel.setLayout(new BoxLayout(zPanel, BoxLayout.LINE_AXIS));
-        JLabel zLabel = new JLabel("Select z axis:");
-        this.zCombo = new JComboBox<>();
-        this.zCombo.setSelectedIndex(-1);
-        this.zCombo.addActionListener(new ComboListener());
-        zPanel.add(zLabel);
-        zPanel.add(Box.createRigidArea(new Dimension(5, 0)));
-        zPanel.add(this.zCombo);
 
-        JPanel colorPanel = new JPanel();
-        colorPanel.setLayout(new BoxLayout(colorPanel, BoxLayout.LINE_AXIS));
-        colorPanel.add(new JLabel("Neutral z value:"));
-        colorPanel.add(Box.createRigidArea(new Dimension(5, 0)));
-        this.neutralText = new JTextField("0", 32);
-        this.neutralText.addKeyListener(new TextFieldListener());
-        colorPanel.add(this.neutralText);
-        colorPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-        colorPanel.add(new JLabel("High z value:"));
-        colorPanel.add(Box.createRigidArea(new Dimension(5, 0)));
-        this.highText = new JTextField(32);
-        this.highText.addKeyListener(new TextFieldListener());
-        colorPanel.add(this.highText);
-        colorPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-        colorPanel.add(new JLabel("Low z value:"));
-        colorPanel.add(Box.createRigidArea(new Dimension(5, 0)));
-        this.lowText = new JTextField(32);
-        this.lowText.addKeyListener(new TextFieldListener());
-        colorPanel.add(this.lowText);
 
         this.button = new JButton("Generate Histogram");
         this.button.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -164,9 +136,7 @@ public class App {
         this.configPanel.add(Box.createRigidArea(new Dimension(0, configRowSpacing)));
         this.configPanel.add(this.getYPanel());
         this.configPanel.add(Box.createRigidArea(new Dimension(0, configRowSpacing)));
-        this.configPanel.add(zPanel);
-        this.configPanel.add(Box.createRigidArea(new Dimension(0, configRowSpacing)));
-        this.configPanel.add(colorPanel);
+        this.configPanel.add(this.getZPanel());
         this.configPanel.add(Box.createRigidArea(new Dimension(0, configRowSpacing)));
         this.configPanel.add(button);
         this.configPanel.setVisible(false);
@@ -196,8 +166,8 @@ public class App {
         this.xCombo = new JComboBox<>();
         this.xCombo.setSelectedIndex(-1);
         this.xCombo.addActionListener(new ComboListener());
-        JLabel xMinLabel = new JLabel("Min x value:");
-        JLabel xMaxLabel = new JLabel("Max x value:");
+        JLabel xMinLabel = new JLabel("X min:");
+        JLabel xMaxLabel = new JLabel("X max:");
         JLabel xSpacingLabel = new JLabel("X spacing:");
         this.xMinText = new JTextField("0", 32);
         this.xMinText.addKeyListener(new TextFieldListener());
@@ -230,8 +200,8 @@ public class App {
         this.yCombo = new JComboBox<>();
         this.yCombo.setSelectedIndex(-1);
         this.yCombo.addActionListener(new ComboListener());
-        JLabel yMinLabel = new JLabel("Min y value:");
-        JLabel yMaxLabel = new JLabel("Max y value:");
+        JLabel yMinLabel = new JLabel("Y min:");
+        JLabel yMaxLabel = new JLabel("Y max:");
         JLabel ySpacingLabel = new JLabel("Y spacing:");
         this.yMinText = new JTextField("0", 32);
         this.yMinText.addKeyListener(new TextFieldListener());
@@ -255,6 +225,37 @@ public class App {
         yPanel.add(Box.createRigidArea(new Dimension(5, 0)));
         yPanel.add(this.ySpacingText);
         return yPanel;
+    }
+
+    private JPanel getZPanel() {
+        JPanel zPanel = new JPanel();
+        zPanel.setLayout(new BoxLayout(zPanel, BoxLayout.LINE_AXIS));
+        JLabel zLabel = new JLabel("Select z axis:");
+        this.zCombo = new JComboBox<>();
+        this.zCombo.setSelectedIndex(-1);
+        this.zCombo.addActionListener(new ComboListener());
+        zPanel.add(zLabel);
+        zPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+        zPanel.add(this.zCombo);
+        zPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+        zPanel.add(new JLabel("Z neutral:"));
+        zPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+        this.neutralText = new JTextField("0", 32);
+        this.neutralText.addKeyListener(new TextFieldListener());
+        zPanel.add(this.neutralText);
+        zPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+        zPanel.add(new JLabel("Z high:"));
+        zPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+        this.highText = new JTextField(32);
+        this.highText.addKeyListener(new TextFieldListener());
+        zPanel.add(this.highText);
+        zPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+        zPanel.add(new JLabel("Z low:"));
+        zPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+        this.lowText = new JTextField(32);
+        this.lowText.addKeyListener(new TextFieldListener());
+        zPanel.add(this.lowText);
+        return zPanel;
     }
 
     private JMenuBar getMenuBar() {
