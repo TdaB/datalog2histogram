@@ -20,34 +20,33 @@ public class CSVParser {
     private static final Logger log = LoggerFactory.getLogger(CSVParser.class);
     private static final Config config = ConfigFactory.defaultApplication();
     private final String filePath;
-    private final String delimiter;
+    private String delimiter;
     private List<String> columnNames = new ArrayList<>();
     private Map<Point, CellData> table;
     private Set<Double> xValues = new TreeSet<>();
     private Set<Double> yValues = new TreeSet<>(Comparator.reverseOrder());
+    private static final List<String> DELIMITERS = Arrays.asList("\t", ",", ";", " ");
 
     public CSVParser(String filePath) throws Exception {
-        this(filePath, "\t");
-    }
-
-    public CSVParser(String filePath, String delimiter) throws Exception {
         if (filePath == null || filePath.isEmpty()) {
             throw new RuntimeException("File path was not provided to CSV parser");
         }
         this.filePath = filePath;
-        this.delimiter = delimiter;
         this.parseHeader();
     }
 
     private void parseHeader() throws Exception {
         try (BufferedReader br = new BufferedReader(new FileReader(this.filePath))) {
             for (String line; (line = br.readLine()) != null; ) {
-                String[] parts = line.split(this.delimiter);
-                if (parts.length < 3) {
-                    throw new RuntimeException("Not enough columns provided in CSV: " + parts.length);
+                for (String delimiter : DELIMITERS) {
+                    String[] parts = line.split(delimiter);
+                    if (parts.length >= 3) {
+                        this.delimiter = delimiter;
+                        this.columnNames.addAll(Arrays.asList(parts));
+                        return;
+                    }
                 }
-                this.columnNames.addAll(Arrays.asList(parts));
-                return;
+                throw new RuntimeException("Failed to parse CSV with <TAB>, <COMMA>, <SEMICOLON>, and <SPACE>");
             }
         }
     }
