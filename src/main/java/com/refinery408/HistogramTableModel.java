@@ -14,6 +14,7 @@ public class HistogramTableModel extends AbstractTableModel {
     private Set<Double> xLabels;
     private Set<Double> yLabels;
     private String[][] averages;
+    private String[][] hitPercentages;
     private String[][] hits;
     private Color[][] colors;
 
@@ -22,6 +23,7 @@ public class HistogramTableModel extends AbstractTableModel {
         this.xLabels = xLabels;
         this.yLabels = yLabels;
         this.averages = new String[this.yLabels.size()][this.xLabels.size()];
+        this.hitPercentages = new String[this.yLabels.size()][this.xLabels.size()];
         this.hits = new String[this.yLabels.size()][this.xLabels.size()];
         this.colors = new Color[this.yLabels.size()][this.xLabels.size()];
         this.populateMatrices();
@@ -51,6 +53,10 @@ public class HistogramTableModel extends AbstractTableModel {
         return this.hits[row][col];
     }
 
+    public String getHitPercentageAt(int row, int col) {
+        return this.hitPercentages[row][col];
+    }
+
     public Color getColorAt(int row, int col) {
         return this.colors[row][col];
     }
@@ -77,6 +83,7 @@ public class HistogramTableModel extends AbstractTableModel {
                     continue;
                 }
                 averages[row][col] = String.format("%5.3f", data.getAverage());
+                hitPercentages[row][col] = String.format("%5.2f", data.getHitPercentage());
                 hits[row][col] = String.format("%d", data.getHits());
                 colors[row][col] = data.getColor();
             }

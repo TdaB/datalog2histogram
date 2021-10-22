@@ -284,6 +284,7 @@ public class App {
                                          yAxis,
                                          parser.getyValues().toArray(new Double[0])[rowIndex]));
                 joiner.add("Hits: " + tableModel.getHitsAt(rowIndex, realColumnIndex));
+                joiner.add("Hit %: " + tableModel.getHitPercentageAt(rowIndex, realColumnIndex));
 
                 return joiner.toString();
             }

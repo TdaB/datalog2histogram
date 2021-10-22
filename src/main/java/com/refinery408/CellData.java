@@ -6,7 +6,8 @@ public class CellData {
     private final Double neutralValue;
     private final Double highValue;
     private final Double lowValue;
-    private Double average;
+    private double average;
+    private double hitPercentage;
     private int hits = 0;
 
     public CellData(Double neutralValue, Double highValue, Double lowValue) {
@@ -18,14 +19,20 @@ public class CellData {
     public void updateAverage(double value, double frac) {
         if (this.hits == 0) {
             this.average = value;
+            this.hitPercentage = frac;
         } else {
             this.average += frac * ((value - this.average) / (this.hits + 1));
+            this.hitPercentage += ((frac - this.hitPercentage) / (this.hits + 1));
         }
         this.hits += 1;
     }
 
     public double getAverage() {
         return average;
+    }
+
+    public double getHitPercentage() {
+        return hitPercentage;
     }
 
     public int getHits() {
