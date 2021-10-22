@@ -273,7 +273,6 @@ public class App {
                 int rowIndex = rowAtPoint(p);
                 int colIndex = columnAtPoint(p);
                 int realColumnIndex = convertColumnIndexToModel(colIndex);
-
                 if (realColumnIndex < 0) return null;
 
                 StringJoiner joiner = new StringJoiner(", ");
@@ -284,8 +283,10 @@ public class App {
                                          yAxis,
                                          parser.getyValues().toArray(new Double[0])[rowIndex]));
                 joiner.add("Hits: " + tableModel.getHitsAt(rowIndex, realColumnIndex));
-                joiner.add("Hit %: " + tableModel.getHitPercentageAt(rowIndex, realColumnIndex));
-
+                Double hitPercentage = tableModel.getHitPercentageAt(rowIndex, realColumnIndex);
+                if (hitPercentage != null) {
+                    joiner.add(String.format("Hit %%: %.1f", hitPercentage * 100));
+                }
                 return joiner.toString();
             }
         };
