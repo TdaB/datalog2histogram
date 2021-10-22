@@ -13,18 +13,18 @@ public class HistogramTableModel extends AbstractTableModel {
     private final Map<Point, CellData> data;
     private Set<Double> xLabels;
     private Set<Double> yLabels;
-    private String[][] averages;
-    private String[][] hitPercentages;
-    private String[][] hits;
+    private Double[][] averages;
+    private Double[][] hitPercentages;
+    private Integer[][] hits;
     private Color[][] colors;
 
     public HistogramTableModel(Map<Point, CellData> data, Set<Double> xLabels, Set<Double> yLabels) {
         this.data = data;
         this.xLabels = xLabels;
         this.yLabels = yLabels;
-        this.averages = new String[this.yLabels.size()][this.xLabels.size()];
-        this.hitPercentages = new String[this.yLabels.size()][this.xLabels.size()];
-        this.hits = new String[this.yLabels.size()][this.xLabels.size()];
+        this.averages = new Double[this.yLabels.size()][this.xLabels.size()];
+        this.hitPercentages = new Double[this.yLabels.size()][this.xLabels.size()];
+        this.hits = new Integer[this.yLabels.size()][this.xLabels.size()];
         this.colors = new Color[this.yLabels.size()][this.xLabels.size()];
         this.populateMatrices();
     }
@@ -46,14 +46,14 @@ public class HistogramTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int row, int col) {
-        return this.averages[row][col];
+        return String.format("%5.3f", this.averages[row][col]);
     }
 
-    public String getHitsAt(int row, int col) {
+    public Integer getHitsAt(int row, int col) {
         return this.hits[row][col];
     }
 
-    public String getHitPercentageAt(int row, int col) {
+    public Double getHitPercentageAt(int row, int col) {
         return this.hitPercentages[row][col];
     }
 
@@ -77,14 +77,15 @@ public class HistogramTableModel extends AbstractTableModel {
                 double yLabel = yLabels[row];
                 CellData data = this.data.get(new Point(xLabel, yLabel));
                 if (data == null) {
-                    averages[row][col] = "";
-                    hits[row][col] = "0";
+                    averages[row][col] = null;
+                    hitPercentages[row][col] = null;
+                    hits[row][col] = 0;
                     colors[row][col] = Color.GRAY;
                     continue;
                 }
-                averages[row][col] = String.format("%5.3f", data.getAverage());
-                hitPercentages[row][col] = String.format("%5.2f", data.getHitPercentage());
-                hits[row][col] = String.format("%d", data.getHits());
+                averages[row][col] = data.getAverage();
+                hitPercentages[row][col] = data.getHitPercentage();
+                hits[row][col] = data.getHits();
                 colors[row][col] = data.getColor();
             }
         }
