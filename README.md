@@ -11,7 +11,7 @@ to pay $30 for MegaLogViewer.
 gradle clean build
 ```
 
-## How to Run
+## How to run
 ```
 gradle run
 ```
