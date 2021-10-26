@@ -42,7 +42,8 @@ public class CSVParser {
                     String[] parts = line.split(delimiter);
                     if (parts.length >= 3) {
                         this.delimiter = delimiter;
-                        this.columnNames.addAll(Arrays.asList(parts));
+                        Arrays.asList(parts)
+                              .forEach(h -> this.columnNames.add(h.replaceAll("^\"|\"$", "")));
                         return;
                     }
                 }

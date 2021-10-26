@@ -40,7 +40,6 @@ import java.io.File;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.StringJoiner;
 
 public class App {
     private static final Logger log = LoggerFactory.getLogger(App.class);
@@ -275,19 +274,18 @@ public class App {
                 int realColumnIndex = convertColumnIndexToModel(colIndex);
                 if (realColumnIndex < 0) return null;
 
-                StringJoiner joiner = new StringJoiner(", ");
-                joiner.add(String.format("%s: %.0f",
-                                         xAxis,
-                                         parser.getxValues().toArray(new Double[0])[realColumnIndex]));
-                joiner.add(String.format("%s: %.0f",
-                                         yAxis,
-                                         parser.getyValues().toArray(new Double[0])[rowIndex]));
-                joiner.add("Hits: " + tableModel.getHitsAt(rowIndex, realColumnIndex));
-                Double hitPercentage = tableModel.getHitPercentageAt(rowIndex, realColumnIndex);
-                if (hitPercentage != null) {
-                    joiner.add(String.format("Hit %%: %.1f", hitPercentage * 100));
-                }
-                return joiner.toString();
+                String hitAccuracy = tableModel.getHitPercentageAt(rowIndex, realColumnIndex) == null ?
+                                     "" :
+                                     String.format("Hit accuracy: %.1f%%",
+                                                   tableModel.getHitPercentageAt(rowIndex, realColumnIndex) * 100);
+
+                return String.format("<html>%s: %.0f, %s: %.0f<br>Hits: %d, %s",
+                                               xAxis,
+                                               parser.getxValues().toArray(new Double[0])[realColumnIndex],
+                                               yAxis,
+                                               parser.getyValues().toArray(new Double[0])[rowIndex],
+                                               tableModel.getHitsAt(rowIndex, realColumnIndex),
+                                               hitAccuracy);
             }
         };
         table.setRowHeight(30);
