@@ -17,3 +17,9 @@ gradle run
 ```
 Alternatively, on Windows you can unzip build/distributions/datalog2histogram.zip after building and run 
 **bin/datalog2histogram.bat**.
+
+If you feel like giving back to me, you are always welcome to
+
+[![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate?business=53J7RAATF9L2U&no_recurring=0&currency_code=USD)
+
+Enjoy!
