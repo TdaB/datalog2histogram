@@ -15,8 +15,8 @@ gradle clean build
 ```
 gradle run
 ```
-Alternatively, on Windows you can unzip build/distributions/datalog2histogram.zip after building and run 
-**bin/datalog2histogram.bat**.
+Alternatively, on Windows you can unzip *distributions/datalog2histogram.zip* and run 
+*bin/datalog2histogram.bat*.
 
 If you feel like giving back to me, you are always welcome to
 
