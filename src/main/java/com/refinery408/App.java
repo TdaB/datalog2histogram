@@ -149,7 +149,7 @@ public class App {
         JLabel ySpacingLabel = new JLabel("Y spacing:");
         this.yMinText = new JTextField("0", 32);
         this.yMinText.addKeyListener(new TextFieldListener());
-        this.yMaxText = new JTextField("100", 32);
+        this.yMaxText = new JTextField("110", 32);
         this.yMaxText.addKeyListener(new TextFieldListener());
         this.ySpacingText = new JTextField("10", 32);
         this.ySpacingText.addKeyListener(new TextFieldListener());
