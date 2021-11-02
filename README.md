@@ -6,6 +6,10 @@ A CSV parser and 2D histogram generator designed to read exported datalogs from 
 I have been using this to great effect with my AEM Infinity to street tune my S2000. Basically, I didn't want 
 to pay $30 for MegaLogViewer.
 
+## Requirements
+1. Java 8 or newer
+2. Gradle (if you want to build source)
+
 ## How to build
 ```
 gradle clean build
