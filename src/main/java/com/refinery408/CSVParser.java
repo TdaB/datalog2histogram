@@ -76,10 +76,10 @@ public class CSVParser {
                             Double low,
                             Double xMin,
                             Double xMax,
-                            int xSpacing,
+                            Double xSpacing,
                             Double yMin,
                             Double yMax,
-                            int ySpacing) throws Exception {
+                            Double ySpacing) throws Exception {
         this.table = new HashMap<>();
         this.xValues = new TreeSet<>();
         this.yValues = new TreeSet<>(Comparator.reverseOrder());

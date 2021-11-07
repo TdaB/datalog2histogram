@@ -104,6 +104,10 @@ public class App {
     }
 
     private JPanel getXPanel() {
+        double xMin = config.getDouble("table.axis.xmin");
+        double xMax = config.getDouble("table.axis.xmax");
+        double xWidth = config.getDouble("table.axis.xwidth");
+
         JPanel xPanel = new JPanel();
         xPanel.setLayout(new BoxLayout(xPanel, BoxLayout.LINE_AXIS));
         JLabel xAxisLabel = new JLabel("Select x axis:");
@@ -113,11 +117,11 @@ public class App {
         JLabel xMinLabel = new JLabel("X min:");
         JLabel xMaxLabel = new JLabel("X max:");
         JLabel xSpacingLabel = new JLabel("X spacing:");
-        this.xMinText = new JTextField("0", 32);
+        this.xMinText = new JTextField(String.valueOf(xMin), 32);
         this.xMinText.addKeyListener(new TextFieldListener());
-        this.xMaxText = new JTextField("9000", 32);
+        this.xMaxText = new JTextField(String.valueOf(xMax), 32);
         this.xMaxText.addKeyListener(new TextFieldListener());
-        this.xSpacingText = new JTextField("1000", 32);
+        this.xSpacingText = new JTextField(String.valueOf(xWidth), 32);
         this.xSpacingText.addKeyListener(new TextFieldListener());
         xPanel.add(xAxisLabel);
         xPanel.add(Box.createRigidArea(new Dimension(5, 0)));
@@ -138,6 +142,10 @@ public class App {
     }
 
     private JPanel getYPanel() {
+        double yMin = config.getDouble("table.axis.ymin");
+        double yMax = config.getDouble("table.axis.ymax");
+        double yWidth = config.getDouble("table.axis.ywidth");
+
         JPanel yPanel = new JPanel();
         yPanel.setLayout(new BoxLayout(yPanel, BoxLayout.LINE_AXIS));
         JLabel yAxisLabel = new JLabel("Select y axis:");
@@ -147,11 +155,11 @@ public class App {
         JLabel yMinLabel = new JLabel("Y min:");
         JLabel yMaxLabel = new JLabel("Y max:");
         JLabel ySpacingLabel = new JLabel("Y spacing:");
-        this.yMinText = new JTextField("0", 32);
+        this.yMinText = new JTextField(String.valueOf(yMin), 32);
         this.yMinText.addKeyListener(new TextFieldListener());
-        this.yMaxText = new JTextField("110", 32);
+        this.yMaxText = new JTextField(String.valueOf(yMax), 32);
         this.yMaxText.addKeyListener(new TextFieldListener());
-        this.ySpacingText = new JTextField("10", 32);
+        this.ySpacingText = new JTextField(String.valueOf(yWidth), 32);
         this.ySpacingText.addKeyListener(new TextFieldListener());
         yPanel.add(yAxisLabel);
         yPanel.add(Box.createRigidArea(new Dimension(5, 0)));
@@ -257,10 +265,10 @@ public class App {
                                       Double low,
                                       Double xMin,
                                       Double xMax,
-                                      int xSteps,
+                                      Double xSteps,
                                       Double yMin,
                                       Double yMax,
-                                      int ySteps) throws Exception {
+                                      Double ySteps) throws Exception {
         this.parser.parseCsv(xAxis, yAxis, zAxis, neutral, high, low, xMin, xMax, xSteps, yMin, yMax, ySteps);
 
         HistogramTableModel tableModel = new HistogramTableModel(parser.getData(), parser.getxValues(), parser.getyValues());
@@ -293,7 +301,7 @@ public class App {
         for (Enumeration<TableColumn> e = table.getColumnModel().getColumns(); e.hasMoreElements();) {
             e.nextElement().setCellRenderer(cellRenderer);
         }
-        table.setFont(new Font("Monospaced", Font.BOLD, 30));
+        table.setFont(new Font("Monospaced", Font.BOLD, 20));
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setRowHeaderView(buildRowHeader(table));
         JPanel tablePanel = new JPanel(new BorderLayout());
@@ -310,10 +318,10 @@ public class App {
         try {
             double xMin = Double.parseDouble(this.xMinText.getText());
             double xMax = Double.parseDouble(this.xMaxText.getText());
-            int xSpacing = Integer.parseInt(this.xSpacingText.getText());
+            double xSpacing = Double.parseDouble(this.xSpacingText.getText());
             double yMin = Double.parseDouble(this.yMinText.getText());
             double yMax = Double.parseDouble(this.yMaxText.getText());
-            int ySpacing = Integer.parseInt(this.ySpacingText.getText());
+            double ySpacing = Double.parseDouble(this.ySpacingText.getText());
 
             if (xMin >= xMax || yMin >= yMax || xSpacing <= 0 || xSpacing >= xMax || ySpacing <= 0 || ySpacing >= yMax) {
                 return false;
@@ -414,10 +422,10 @@ public class App {
                         low,
                         Double.parseDouble(xMinText.getText()),
                         Double.parseDouble(xMaxText.getText()),
-                        Integer.parseInt(xSpacingText.getText()),
+                        Double.parseDouble(xSpacingText.getText()),
                         Double.parseDouble(yMinText.getText()),
                         Double.parseDouble(yMaxText.getText()),
-                        Integer.parseInt(ySpacingText.getText()));
+                        Double.parseDouble(ySpacingText.getText()));
             } catch (Exception ex) {
                 ex.printStackTrace();
                 return;
