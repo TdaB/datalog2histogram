@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,11 +16,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 public class CSVParser {
     private static final Logger log = LoggerFactory.getLogger(CSVParser.class);
     private static final Config config = ConfigFactory.defaultApplication();
     private final String filePath;
+    private final String fileName;
     private String delimiter;
     private List<String> columnNames = new ArrayList<>();
     private Map<Point, CellData> table;
@@ -33,6 +36,8 @@ public class CSVParser {
         }
         this.filePath = filePath;
         this.parseHeader();
+        String[] splitPath = filePath.split(Pattern.quote(File.separator));
+        this.fileName = splitPath[splitPath.length - 1];
     }
 
     private void parseHeader() throws Exception {
@@ -66,6 +71,10 @@ public class CSVParser {
 
     public List<String> getColumnNames() {
         return columnNames;
+    }
+
+    public String getFileName() {
+        return fileName;
     }
 
     protected void parseCsv(String xAxis,
