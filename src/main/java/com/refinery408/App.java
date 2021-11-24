@@ -74,6 +74,7 @@ public class App {
                 }
             }
             this.tabbedPane.addTab(parser.getFileName(), new TabPanel(parser));
+            this.tabbedPane.setTabComponentAt(0, new ButtonTabComponent(this.tabbedPane));
         });
         menu.add(menuItem);
         menuBar.add(menu);

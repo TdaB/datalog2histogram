@@ -50,6 +50,7 @@ public class TabPanel extends JPanel {
     private JTextField yMinText;
     private JTextField yMaxText;
     private JTextField ySpacingText;
+    private JPanel tablePanel;
 
     public TabPanel(CSVParser parser) {
         this.parser = parser;
@@ -231,13 +232,13 @@ public class TabPanel extends JPanel {
             }
         };
         table.setRowHeight(30);
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        //table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         ColumnCellRenderer cellRenderer = new ColumnCellRenderer(tableModel.getColors());
         for (Enumeration<TableColumn> e = table.getColumnModel().getColumns(); e.hasMoreElements();) {
             e.nextElement().setCellRenderer(cellRenderer);
         }
         table.setFont(new Font("Monospaced", Font.BOLD, 20));
-        JScrollPane scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setRowHeaderView(buildRowHeader(table));
         JPanel tablePanel = new JPanel(new BorderLayout());
         tablePanel.add(scrollPane, BorderLayout.CENTER);
@@ -328,12 +329,12 @@ public class TabPanel extends JPanel {
     class GenerateButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             // We know all input has been checked
-            JPanel tablePanel;
+            JPanel newTablePanel;
             try {
                 Double neutral = neutralText.getText().isEmpty() ? null : Double.valueOf(neutralText.getText());
                 Double high = highText.getText().isEmpty() ? null : Double.valueOf(highText.getText());
                 Double low = lowText.getText().isEmpty() ? null : Double.valueOf(lowText.getText());
-                tablePanel = generateTablePanel(
+                newTablePanel = generateTablePanel(
                         (String) xCombo.getSelectedItem(),
                         (String) yCombo.getSelectedItem(),
                         (String) zCombo.getSelectedItem(),
@@ -350,7 +351,11 @@ public class TabPanel extends JPanel {
                 ex.printStackTrace();
                 return;
             }
-            mainPanel.add(tablePanel);
+            if (tablePanel != null) {
+                mainPanel.remove(tablePanel);
+            }
+            mainPanel.add(newTablePanel);
+            tablePanel = newTablePanel;
             mainPanel.revalidate();
             mainPanel.repaint();
         }
