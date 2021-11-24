@@ -8,10 +8,10 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
@@ -24,8 +24,7 @@ public class ButtonTabComponent extends JPanel {
     private final JTabbedPane pane;
 
     public ButtonTabComponent(final JTabbedPane pane) {
-        //unset default FlowLayout' gaps
-        super(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        super(new BorderLayout());
         if (pane == null) {
             throw new NullPointerException("TabbedPane is null");
         }
@@ -42,23 +41,19 @@ public class ButtonTabComponent extends JPanel {
                 return null;
             }
         };
-
-        add(label);
-        //add more space between the label and the button
-        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
-        //tab button
-        JButton button = new TabButton();
-        add(button);
-        //add more space to the top of the component
-        setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
+        // Space between label and button
+        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 8));
+        add(label, BorderLayout.LINE_START);
+        add(new TabCloseButton(), BorderLayout.LINE_END);
+        // Expand space around component
+        setBorder(BorderFactory.createEmptyBorder(3, 4, 1, 0));
     }
 
-    private class TabButton extends JButton implements ActionListener {
-        public TabButton() {
+    private class TabCloseButton extends JButton implements ActionListener {
+        public TabCloseButton() {
             int size = 17;
             setPreferredSize(new Dimension(size, size));
-            setHorizontalAlignment(JLabel.RIGHT);
-            setToolTipText("close this tab");
+            setToolTipText("Close tab");
             //Make the button looks the same for all Laf's
             setUI(new BasicButtonUI());
             //Make it transparent
@@ -99,7 +94,7 @@ public class ButtonTabComponent extends JPanel {
             if (getModel().isRollover()) {
                 g2.setColor(Color.RED);
             }
-            int delta = 6;
+            int delta = 5;
             g2.drawLine(delta, delta, getWidth() - delta - 1, getHeight() - delta - 1);
             g2.drawLine(getWidth() - delta - 1, delta, delta, getHeight() - delta - 1);
             g2.dispose();

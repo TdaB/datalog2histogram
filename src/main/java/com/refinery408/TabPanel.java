@@ -192,6 +192,18 @@ public class TabPanel extends JPanel {
         return zPanel;
     }
 
+    private void initConfig() {
+        this.xCombo.setModel(new DefaultComboBoxModel<>(this.parser.getColumnNames().toArray(new String[0])));
+        this.xCombo.setSelectedIndex(0);
+        this.yCombo.setModel(new DefaultComboBoxModel<>(this.parser.getColumnNames().toArray(new String[0])));
+        this.yCombo.setSelectedIndex(1);
+        this.zCombo.setModel(new DefaultComboBoxModel<>(this.parser.getColumnNames().toArray(new String[0])));
+        this.zCombo.setSelectedIndex(2);
+        this.neutralText.setText("0");
+        this.highText.setText("");
+        this.lowText.setText("");
+    }
+
     private JPanel generateTablePanel(String xAxis,
                                       String yAxis,
                                       String zAxis,
@@ -223,25 +235,28 @@ public class TabPanel extends JPanel {
                                                    tableModel.getHitPercentageAt(rowIndex, realColumnIndex) * 100);
 
                 return String.format("<html>%s: %.0f, %s: %.0f<br>Hits: %d, %s",
-                                               xAxis,
-                                               parser.getxValues().toArray(new Double[0])[realColumnIndex],
-                                               yAxis,
-                                               parser.getyValues().toArray(new Double[0])[rowIndex],
-                                               tableModel.getHitsAt(rowIndex, realColumnIndex),
-                                               hitAccuracy);
+                                     xAxis,
+                                     parser.getxValues().toArray(new Double[0])[realColumnIndex],
+                                     yAxis,
+                                     parser.getyValues().toArray(new Double[0])[rowIndex],
+                                     tableModel.getHitsAt(rowIndex, realColumnIndex),
+                                     hitAccuracy);
             }
         };
-        table.setRowHeight(30);
-        //table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        table.setRowHeight(32);
         ColumnCellRenderer cellRenderer = new ColumnCellRenderer(tableModel.getColors());
-        for (Enumeration<TableColumn> e = table.getColumnModel().getColumns(); e.hasMoreElements();) {
+        for (Enumeration<TableColumn> e = table.getColumnModel().getColumns(); e.hasMoreElements(); ) {
             e.nextElement().setCellRenderer(cellRenderer);
         }
         table.setFont(new Font("Monospaced", Font.BOLD, 20));
+        table.getTableHeader().setReorderingAllowed(false);
+
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setRowHeaderView(buildRowHeader(table));
+
         JPanel tablePanel = new JPanel(new BorderLayout());
         tablePanel.add(scrollPane, BorderLayout.CENTER);
+
         return tablePanel;
     }
 
@@ -298,7 +313,7 @@ public class TabPanel extends JPanel {
             }
         });
         rowHeader.setOpaque(false);
-        rowHeader.setFixedCellWidth(60);
+        rowHeader.setFixedCellWidth(64);
         rowHeader.setCellRenderer(new RowHeaderRenderer(table));
         rowHeader.setBackground(table.getBackground());
         rowHeader.setForeground(table.getForeground());
@@ -359,17 +374,5 @@ public class TabPanel extends JPanel {
             mainPanel.revalidate();
             mainPanel.repaint();
         }
-    }
-
-    private void initConfig() {
-        this.xCombo.setModel(new DefaultComboBoxModel<>(this.parser.getColumnNames().toArray(new String[0])));
-        this.xCombo.setSelectedIndex(0);
-        this.yCombo.setModel(new DefaultComboBoxModel<>(this.parser.getColumnNames().toArray(new String[0])));
-        this.yCombo.setSelectedIndex(1);
-        this.zCombo.setModel(new DefaultComboBoxModel<>(this.parser.getColumnNames().toArray(new String[0])));
-        this.zCombo.setSelectedIndex(2);
-        this.neutralText.setText("0");
-        this.highText.setText("");
-        this.lowText.setText("");
     }
 }
