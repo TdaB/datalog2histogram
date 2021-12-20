@@ -1,15 +1,15 @@
 package com.refinery408;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import java.util.Objects;
 
+@Getter
+@AllArgsConstructor
 public class Point {
     private final double x;
     private final double y;
-
-    public Point(double x, double y) {
-        this.x = x;
-        this.y = y;
-    }
 
     @Override
     public boolean equals(Object obj) {

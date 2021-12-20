@@ -274,7 +274,7 @@ public class TabPanel extends JPanel {
             double yMax = Double.parseDouble(this.yMaxText.getText());
             double ySpacing = Double.parseDouble(this.ySpacingText.getText());
 
-            if (xMin >= xMax || yMin >= yMax || xSpacing <= 0 || xSpacing >= xMax || ySpacing <= 0 || ySpacing >= yMax) {
+            if (xMin >= xMax || yMin >= yMax || xSpacing <= 0 || xSpacing > xMax || ySpacing <= 0 || ySpacing > yMax) {
                 return false;
             }
 
