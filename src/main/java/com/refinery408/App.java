@@ -43,17 +43,16 @@ public class App {
         this.tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 
         this.mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
-        mainPanel.add(this.importButton);
-        mainPanel.add(this.tabbedPane);
+        this.mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
+        this.mainPanel.add(this.importButton);
+        this.mainPanel.add(this.tabbedPane);
 
         this.frame = new JFrame();
-        this.frame.getContentPane().add(mainPanel);
+        this.frame.getContentPane().add(this.mainPanel);
         this.frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.frame.setTitle("Da Bomb Histogram");
-        this.frame.setPreferredSize(new Dimension(config.getInt("window.width"),
-                                                  config.getInt("window.height")));
         this.frame.pack();
+        this.frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.frame.setVisible(true);
     }
 
@@ -92,7 +91,7 @@ public class App {
                                                   JOptionPane.ERROR_MESSAGE);
                 }
             }
-            tabbedPane.addTab(parser.getFileName(), new TabPanel(parser));
+            tabbedPane.addTab(parser.getFileName().split("\\.(CSV|csv)")[0], new TabPanel(parser));
             int index = tabbedPane.getTabCount() - 1;
             tabbedPane.setTabComponentAt(index, new ButtonTabComponent(tabbedPane));
             tabbedPane.setSelectedIndex(index);

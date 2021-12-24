@@ -116,7 +116,7 @@ public class CSVParser {
                 double y = Double.parseDouble(parts[yIndex]);
                 double z = Double.parseDouble(parts[zIndex]);
 
-                double binnedX = 0;
+                Double binnedX = null;
                 double xFrac = 0;
                 for (double val : this.getxValues()) {
                     if (Math.abs(x - val) <= .5 * xSpacing) {
@@ -125,7 +125,11 @@ public class CSVParser {
                         break;
                     }
                 }
-                double binnedY = 0;
+                if (binnedX == null) {
+                    continue;
+                }
+
+                Double binnedY = null;
                 double yFrac = 0;
                 for (double val : this.getyValues()) {
                     if (Math.abs(y - val) <= .5 * ySpacing) {
@@ -134,6 +138,10 @@ public class CSVParser {
                         break;
                     }
                 }
+                if (binnedY == null) {
+                    continue;
+                }
+
                 double frac = .5 * xFrac + .5 * yFrac;
                 Point p = new Point(binnedX, binnedY);
                 if (this.table.containsKey(p)) {
