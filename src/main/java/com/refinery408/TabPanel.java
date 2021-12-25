@@ -18,10 +18,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.TableColumn;
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -39,7 +42,6 @@ public class TabPanel extends JPanel {
     private JComboBox<String> yCombo;
     private JComboBox<String> zCombo;
     private JButton button;
-    private JPanel mainPanel;
     private JTextField neutralText;
     private JTextField highText;
     private JTextField lowText;
@@ -53,6 +55,7 @@ public class TabPanel extends JPanel {
     private JPanel tablePanel;
 
     public TabPanel(CSVParser parser) {
+        this.setLayout(new GridBagLayout());
         this.parser = parser;
 
         this.button = new JButton("Generate Histogram");
@@ -64,7 +67,7 @@ public class TabPanel extends JPanel {
         int configRowSpacing = config.getInt("config.spacing.row");
         this.configPanel = new JPanel();
         this.configPanel.setLayout(new BoxLayout(this.configPanel, BoxLayout.PAGE_AXIS));
-        this.configPanel.setMaximumSize(new Dimension(config.getInt("config.width"),
+        this.configPanel.setPreferredSize(new Dimension(config.getInt("config.width"),
                                                       config.getInt("config.height")));
         this.configPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.configPanel.add(this.getXPanel());
@@ -77,12 +80,25 @@ public class TabPanel extends JPanel {
 
         this.initConfig();
 
-        this.mainPanel = new JPanel();
-        this.mainPanel.setLayout(new BoxLayout(this.mainPanel, BoxLayout.PAGE_AXIS));
-        this.mainPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        this.mainPanel.add(this.configPanel);
-        this.mainPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        this.add(this.mainPanel);
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.PAGE_START;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        constraints.weighty = 0;
+        constraints.weightx = 0;
+        constraints.insets = new Insets(10, 0, 10, 0);
+        this.add(this.configPanel, constraints);
+
+        this.tablePanel = new JPanel();
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.PAGE_START;
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+        constraints.weighty = 1;
+        constraints.weightx = 1;
+        this.add(this.tablePanel, constraints);
     }
 
     private JPanel getXPanel() {
@@ -234,16 +250,17 @@ public class TabPanel extends JPanel {
                                      String.format("Hit accuracy: %.1f%%",
                                                    tableModel.getHitPercentageAt(rowIndex, realColumnIndex) * 100);
 
-                return String.format("<html>%s: %.0f, %s: %.0f<br>Hits: %d, %s",
+                return String.format("<html>%s: %.0f, %s: %.0f<br>Value: %s<br>Hits: %d, %s",
                                      xAxis,
                                      parser.getxValues().toArray(new Double[0])[realColumnIndex],
                                      yAxis,
                                      parser.getyValues().toArray(new Double[0])[rowIndex],
+                                     tableModel.getValueAt(rowIndex, realColumnIndex),
                                      tableModel.getHitsAt(rowIndex, realColumnIndex),
                                      hitAccuracy);
             }
         };
-        table.setRowHeight(32);
+        table.setRowHeight(config.getInt("table.row.height"));
         ColumnCellRenderer cellRenderer = new ColumnCellRenderer(tableModel.getColors());
         for (Enumeration<TableColumn> e = table.getColumnModel().getColumns(); e.hasMoreElements(); ) {
             e.nextElement().setCellRenderer(cellRenderer);
@@ -254,8 +271,8 @@ public class TabPanel extends JPanel {
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setRowHeaderView(buildRowHeader(table));
 
-        JPanel tablePanel = new JPanel(new BorderLayout());
-        tablePanel.add(scrollPane, BorderLayout.CENTER);
+        JPanel tablePanel = new JPanel(new GridLayout(1, 1));
+        tablePanel.add(scrollPane);
 
         return tablePanel;
     }
@@ -366,13 +383,19 @@ public class TabPanel extends JPanel {
                 ex.printStackTrace();
                 return;
             }
-            if (tablePanel != null) {
-                mainPanel.remove(tablePanel);
-            }
-            mainPanel.add(newTablePanel);
+            remove(tablePanel);
+            GridBagConstraints constraints = new GridBagConstraints();
+            constraints.anchor = GridBagConstraints.PAGE_START;
+            constraints.fill = GridBagConstraints.BOTH;
+            constraints.gridx = 0;
+            constraints.gridy = 1;
+            constraints.weighty = 1;
+            constraints.weightx = 1;
+            constraints.insets = new Insets(0,16,16,16);
+            add(newTablePanel, constraints);
             tablePanel = newTablePanel;
-            mainPanel.revalidate();
-            mainPanel.repaint();
+            revalidate();
+            repaint();
         }
     }
 }
