@@ -77,32 +77,21 @@ public class CSVParser {
         return fileName;
     }
 
-    protected void parseCsv(String xAxis,
-                            String yAxis,
-                            String zAxis,
-                            Double neutral,
-                            Double high,
-                            Double low,
-                            Double xMin,
-                            Double xMax,
-                            Double xSpacing,
-                            Double yMin,
-                            Double yMax,
-                            Double ySpacing) throws Exception {
+    protected void parseCsv(TableConfig tableConfig) throws Exception {
         this.table = new HashMap<>();
         this.xValues = new TreeSet<>();
         this.yValues = new TreeSet<>(Comparator.reverseOrder());
 
-        for (double x = xMin; x <= xMax; x += xSpacing) {
+        for (double x = tableConfig.getXMin(); x <= tableConfig.getXMax(); x += tableConfig.getXSpacing()) {
             this.xValues.add(x);
         }
-        for (double y = yMin; y <= yMax; y += ySpacing) {
+        for (double y = tableConfig.getYMin(); y <= tableConfig.getYMax(); y += tableConfig.getYSpacing()) {
             this.yValues.add(y);
         }
 
-        int xIndex = this.columnNames.indexOf(xAxis);
-        int yIndex = this.columnNames.indexOf(yAxis);
-        int zIndex = this.columnNames.indexOf(zAxis);
+        int xIndex = this.columnNames.indexOf(tableConfig.getXLabel());
+        int yIndex = this.columnNames.indexOf(tableConfig.getYLabel());
+        int zIndex = this.columnNames.indexOf(tableConfig.getZLabel());
 
         try (BufferedReader br = new BufferedReader(new FileReader(this.filePath))) {
             boolean firstLine = true;
@@ -119,9 +108,9 @@ public class CSVParser {
                 Double binnedX = null;
                 double xFrac = 0;
                 for (double val : this.getxValues()) {
-                    if (Math.abs(x - val) <= .5 * xSpacing) {
+                    if (Math.abs(x - val) <= .5 * tableConfig.getXSpacing()) {
                         binnedX = val;
-                        xFrac = 1 - (Math.abs(x - val) / (.5 * xSpacing));
+                        xFrac = 1 - (Math.abs(x - val) / (.5 * tableConfig.getXSpacing()));
                         break;
                     }
                 }
@@ -132,9 +121,9 @@ public class CSVParser {
                 Double binnedY = null;
                 double yFrac = 0;
                 for (double val : this.getyValues()) {
-                    if (Math.abs(y - val) <= .5 * ySpacing) {
+                    if (Math.abs(y - val) <= .5 * tableConfig.getYSpacing()) {
                         binnedY = val;
-                        yFrac = 1 - (Math.abs(y - val) / (.5 * ySpacing));
+                        yFrac = 1 - (Math.abs(y - val) / (.5 * tableConfig.getYSpacing()));
                         break;
                     }
                 }
@@ -147,7 +136,9 @@ public class CSVParser {
                 if (this.table.containsKey(p)) {
                     this.table.get(p).updateAverage(z, frac);
                 } else {
-                    CellData data = new CellData(neutral, high, low);
+                    CellData data = new CellData(tableConfig.getZNeutral(),
+                                                 tableConfig.getZHigh(),
+                                                 tableConfig.getZLow());
                     data.updateAverage(z, frac);
                     this.table.put(p, data);
                 }

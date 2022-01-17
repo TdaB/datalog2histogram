@@ -68,7 +68,7 @@ public class TabPanel extends JPanel {
         this.configPanel = new JPanel();
         this.configPanel.setLayout(new BoxLayout(this.configPanel, BoxLayout.PAGE_AXIS));
         this.configPanel.setPreferredSize(new Dimension(config.getInt("config.width"),
-                                                      config.getInt("config.height")));
+                                                        config.getInt("config.height")));
         this.configPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.configPanel.add(this.getXPanel());
         this.configPanel.add(Box.createRigidArea(new Dimension(0, configRowSpacing)));
@@ -87,7 +87,7 @@ public class TabPanel extends JPanel {
         constraints.gridy = 0;
         constraints.weighty = 0;
         constraints.weightx = 0;
-        constraints.insets = new Insets(5, 0, 5, 0);
+        constraints.insets = new Insets(5, 0, 0, 0);
         this.add(this.configPanel, constraints);
 
         this.tablePanel = new JPanel();
@@ -211,7 +211,7 @@ public class TabPanel extends JPanel {
     private JPanel getMinHitsPanel() {
         JPanel minHitsPanel = new JPanel();
         minHitsPanel.setLayout(new BoxLayout(minHitsPanel, BoxLayout.LINE_AXIS));
-        JLabel label = new JLabel("Min hits to show cell:");
+        JLabel label = new JLabel("Show cells with hits >");
         minHitsPanel.add(label);
         minHitsPanel.add(Box.createRigidArea(new Dimension(5, 0)));
         this.minHitsText = new JTextField("0", 32);
@@ -220,24 +220,13 @@ public class TabPanel extends JPanel {
         return minHitsPanel;
     }
 
-    private JPanel generateTablePanel(String xAxis,
-                                      String yAxis,
-                                      String zAxis,
-                                      Double neutral,
-                                      Double high,
-                                      Double low,
-                                      Double xMin,
-                                      Double xMax,
-                                      Double xSteps,
-                                      Double yMin,
-                                      Double yMax,
-                                      Double ySteps) throws Exception {
-        this.parser.parseCsv(xAxis, yAxis, zAxis, neutral, high, low, xMin, xMax, xSteps, yMin, yMax, ySteps);
+    private JPanel generateTablePanel(TableConfig tableConfig) throws Exception {
+        this.parser.parseCsv(tableConfig);
 
         HistogramTableModel tableModel = new HistogramTableModel(parser.getData(),
                                                                  parser.getxValues(),
                                                                  parser.getyValues(),
-                                                                 Integer.parseInt(this.minHitsText.getText()));
+                                                                 tableConfig.getMinHits());
 
         JTable table = new JTable(tableModel) {
             @Override
@@ -256,9 +245,9 @@ public class TabPanel extends JPanel {
                                             tableModel.getHitPercentageAt(rowIndex, realColumnIndex) * 100);
 
                 return String.format("<html>%s: %.0f, %s: %.0f%s",
-                                     xAxis,
+                                     tableConfig.getXLabel(),
                                      parser.getxValues().toArray(new Double[0])[realColumnIndex],
-                                     yAxis,
+                                     tableConfig.getYLabel(),
                                      parser.getyValues().toArray(new Double[0])[rowIndex],
                                      data);
             }
@@ -370,19 +359,21 @@ public class TabPanel extends JPanel {
                 Double neutral = neutralText.getText().isEmpty() ? null : Double.valueOf(neutralText.getText());
                 Double high = highText.getText().isEmpty() ? null : Double.valueOf(highText.getText());
                 Double low = lowText.getText().isEmpty() ? null : Double.valueOf(lowText.getText());
-                newTablePanel = generateTablePanel(
-                        (String) xCombo.getSelectedItem(),
-                        (String) yCombo.getSelectedItem(),
-                        (String) zCombo.getSelectedItem(),
-                        neutral,
-                        high,
-                        low,
-                        Double.parseDouble(xMinText.getText()),
-                        Double.parseDouble(xMaxText.getText()),
-                        Double.parseDouble(xSpacingText.getText()),
-                        Double.parseDouble(yMinText.getText()),
-                        Double.parseDouble(yMaxText.getText()),
-                        Double.parseDouble(ySpacingText.getText()));
+
+                TableConfig tableConfig = new TableConfig((String) xCombo.getSelectedItem(),
+                                                          Double.parseDouble(xMinText.getText()),
+                                                          Double.parseDouble(xMaxText.getText()),
+                                                          Double.parseDouble(xSpacingText.getText()),
+                                                          (String) yCombo.getSelectedItem(),
+                                                          Double.parseDouble(yMinText.getText()),
+                                                          Double.parseDouble(yMaxText.getText()),
+                                                          Double.parseDouble(ySpacingText.getText()),
+                                                          (String) zCombo.getSelectedItem(),
+                                                          neutral,
+                                                          high,
+                                                          low,
+                                                          Integer.parseInt(minHitsText.getText()));
+                newTablePanel = generateTablePanel(tableConfig);
             } catch (Exception ex) {
                 ex.printStackTrace();
                 return;
@@ -395,7 +386,7 @@ public class TabPanel extends JPanel {
             constraints.gridy = 1;
             constraints.weighty = 1;
             constraints.weightx = 1;
-            constraints.insets = new Insets(0,5,5,5);
+            constraints.insets = new Insets(5, 5, 5, 5);
             add(newTablePanel, constraints);
             tablePanel = newTablePanel;
             revalidate();
