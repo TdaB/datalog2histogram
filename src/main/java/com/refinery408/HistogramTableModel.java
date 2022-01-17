@@ -17,8 +17,9 @@ public class HistogramTableModel extends AbstractTableModel {
     private Double[][] hitPercentages;
     private Integer[][] hits;
     private Color[][] colors;
+    private int minHits;
 
-    public HistogramTableModel(Map<Point, CellData> data, Set<Double> xLabels, Set<Double> yLabels) {
+    public HistogramTableModel(Map<Point, CellData> data, Set<Double> xLabels, Set<Double> yLabels, int minHits) {
         this.data = data;
         this.xLabels = xLabels;
         this.yLabels = yLabels;
@@ -26,6 +27,7 @@ public class HistogramTableModel extends AbstractTableModel {
         this.hitPercentages = new Double[this.yLabels.size()][this.xLabels.size()];
         this.hits = new Integer[this.yLabels.size()][this.xLabels.size()];
         this.colors = new Color[this.yLabels.size()][this.xLabels.size()];
+        this.minHits = minHits;
         this.populateMatrices();
     }
 
@@ -46,7 +48,9 @@ public class HistogramTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int row, int col) {
-        return String.format("%5.3f", this.averages[row][col]);
+        Double value = this.averages[row][col];
+        Integer hits = this.hits[row][col];
+        return value == null || hits < this.minHits ? null : String.format("%5.3f", value);
     }
 
     public Integer getHitsAt(int row, int col) {
@@ -55,10 +59,6 @@ public class HistogramTableModel extends AbstractTableModel {
 
     public Double getHitPercentageAt(int row, int col) {
         return this.hitPercentages[row][col];
-    }
-
-    public Color getColorAt(int row, int col) {
-        return this.colors[row][col];
     }
 
     public Color[][] getColors() {

@@ -31,7 +31,6 @@ public class ButtonTabComponent extends JPanel {
         this.pane = pane;
         setOpaque(false);
 
-        //make JLabel read titles from JTabbedPane
         JLabel label = new JLabel() {
             public String getText() {
                 int i = pane.indexOfTabComponent(ButtonTabComponent.this);
@@ -41,11 +40,9 @@ public class ButtonTabComponent extends JPanel {
                 return null;
             }
         };
-        // Space between label and button
         label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 8));
         add(label, BorderLayout.LINE_START);
         add(new TabCloseButton(), BorderLayout.LINE_END);
-        // Expand space around component
         setBorder(BorderFactory.createEmptyBorder(3, 4, 1, 0));
     }
 
@@ -54,19 +51,13 @@ public class ButtonTabComponent extends JPanel {
             int size = 17;
             setPreferredSize(new Dimension(size, size));
             setToolTipText("Close tab");
-            //Make the button looks the same for all Laf's
             setUI(new BasicButtonUI());
-            //Make it transparent
             setContentAreaFilled(false);
-            //No need to be focusable
             setFocusable(false);
             setBorder(BorderFactory.createEtchedBorder());
             setBorderPainted(false);
-            //Making nice rollover effect
-            //we use the same listener for all buttons
             addMouseListener(buttonMouseListener);
             setRolloverEnabled(true);
-            //Close the proper tab by clicking the button
             addActionListener(this);
         }
 
@@ -77,11 +68,6 @@ public class ButtonTabComponent extends JPanel {
             }
         }
 
-        //we don't want to update UI for this button
-        public void updateUI() {
-        }
-
-        //paint the cross
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             Graphics2D g2 = (Graphics2D) g.create();

@@ -53,6 +53,7 @@ public class TabPanel extends JPanel {
     private JTextField yMaxText;
     private JTextField ySpacingText;
     private JPanel tablePanel;
+    private JTextField minHitsText;
 
     public TabPanel(CSVParser parser) {
         this.setLayout(new GridBagLayout());
@@ -62,7 +63,6 @@ public class TabPanel extends JPanel {
         this.button.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.button.setMnemonic(KeyEvent.VK_G);
         this.button.addActionListener(new GenerateButtonListener());
-        this.button.setEnabled(false);
 
         int configRowSpacing = config.getInt("config.spacing.row");
         this.configPanel = new JPanel();
@@ -76,9 +76,9 @@ public class TabPanel extends JPanel {
         this.configPanel.add(Box.createRigidArea(new Dimension(0, configRowSpacing)));
         this.configPanel.add(this.getZPanel());
         this.configPanel.add(Box.createRigidArea(new Dimension(0, configRowSpacing)));
+        this.configPanel.add(this.getMinHitsPanel());
+        this.configPanel.add(Box.createRigidArea(new Dimension(0, configRowSpacing)));
         this.configPanel.add(this.button);
-
-        this.initConfig();
 
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.PAGE_START;
@@ -87,7 +87,7 @@ public class TabPanel extends JPanel {
         constraints.gridy = 0;
         constraints.weighty = 0;
         constraints.weightx = 0;
-        constraints.insets = new Insets(10, 0, 10, 0);
+        constraints.insets = new Insets(5, 0, 5, 0);
         this.add(this.configPanel, constraints);
 
         this.tablePanel = new JPanel();
@@ -108,9 +108,9 @@ public class TabPanel extends JPanel {
 
         JPanel xPanel = new JPanel();
         xPanel.setLayout(new BoxLayout(xPanel, BoxLayout.LINE_AXIS));
-        JLabel xAxisLabel = new JLabel("Select x axis:");
-        this.xCombo = new JComboBox<>();
-        this.xCombo.setSelectedIndex(-1);
+        JLabel xAxisLabel = new JLabel("Select X axis:");
+        this.xCombo = new JComboBox<>(new DefaultComboBoxModel<>(this.parser.getColumnNames().toArray(new String[0])));
+        this.xCombo.setSelectedIndex(0);
         this.xCombo.addActionListener(new ComboListener());
         JLabel xMinLabel = new JLabel("X min:");
         JLabel xMaxLabel = new JLabel("X max:");
@@ -146,9 +146,9 @@ public class TabPanel extends JPanel {
 
         JPanel yPanel = new JPanel();
         yPanel.setLayout(new BoxLayout(yPanel, BoxLayout.LINE_AXIS));
-        JLabel yAxisLabel = new JLabel("Select y axis:");
-        this.yCombo = new JComboBox<>();
-        this.yCombo.setSelectedIndex(-1);
+        JLabel yAxisLabel = new JLabel("Select Y axis:");
+        this.yCombo = new JComboBox<>(new DefaultComboBoxModel<>(this.parser.getColumnNames().toArray(new String[0])));
+        this.yCombo.setSelectedIndex(1);
         this.yCombo.addActionListener(new ComboListener());
         JLabel yMinLabel = new JLabel("Y min:");
         JLabel yMaxLabel = new JLabel("Y max:");
@@ -180,9 +180,9 @@ public class TabPanel extends JPanel {
     private JPanel getZPanel() {
         JPanel zPanel = new JPanel();
         zPanel.setLayout(new BoxLayout(zPanel, BoxLayout.LINE_AXIS));
-        JLabel zLabel = new JLabel("Select z axis:");
-        this.zCombo = new JComboBox<>();
-        this.zCombo.setSelectedIndex(-1);
+        JLabel zLabel = new JLabel("Select Z axis:");
+        this.zCombo = new JComboBox<>(new DefaultComboBoxModel<>(this.parser.getColumnNames().toArray(new String[0])));
+        this.zCombo.setSelectedIndex(2);
         this.zCombo.addActionListener(new ComboListener());
         zPanel.add(zLabel);
         zPanel.add(Box.createRigidArea(new Dimension(5, 0)));
@@ -208,16 +208,16 @@ public class TabPanel extends JPanel {
         return zPanel;
     }
 
-    private void initConfig() {
-        this.xCombo.setModel(new DefaultComboBoxModel<>(this.parser.getColumnNames().toArray(new String[0])));
-        this.xCombo.setSelectedIndex(0);
-        this.yCombo.setModel(new DefaultComboBoxModel<>(this.parser.getColumnNames().toArray(new String[0])));
-        this.yCombo.setSelectedIndex(1);
-        this.zCombo.setModel(new DefaultComboBoxModel<>(this.parser.getColumnNames().toArray(new String[0])));
-        this.zCombo.setSelectedIndex(2);
-        this.neutralText.setText("0");
-        this.highText.setText("");
-        this.lowText.setText("");
+    private JPanel getMinHitsPanel() {
+        JPanel minHitsPanel = new JPanel();
+        minHitsPanel.setLayout(new BoxLayout(minHitsPanel, BoxLayout.LINE_AXIS));
+        JLabel label = new JLabel("Min hits to show cell:");
+        minHitsPanel.add(label);
+        minHitsPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+        this.minHitsText = new JTextField("0", 32);
+        this.minHitsText.addKeyListener(new TextFieldListener());
+        minHitsPanel.add(this.minHitsText);
+        return minHitsPanel;
     }
 
     private JPanel generateTablePanel(String xAxis,
@@ -234,7 +234,10 @@ public class TabPanel extends JPanel {
                                       Double ySteps) throws Exception {
         this.parser.parseCsv(xAxis, yAxis, zAxis, neutral, high, low, xMin, xMax, xSteps, yMin, yMax, ySteps);
 
-        HistogramTableModel tableModel = new HistogramTableModel(parser.getData(), parser.getxValues(), parser.getyValues());
+        HistogramTableModel tableModel = new HistogramTableModel(parser.getData(),
+                                                                 parser.getxValues(),
+                                                                 parser.getyValues(),
+                                                                 Integer.parseInt(this.minHitsText.getText()));
 
         JTable table = new JTable(tableModel) {
             @Override
@@ -245,19 +248,19 @@ public class TabPanel extends JPanel {
                 int realColumnIndex = convertColumnIndexToModel(colIndex);
                 if (realColumnIndex < 0) return null;
 
-                String hitAccuracy = tableModel.getHitPercentageAt(rowIndex, realColumnIndex) == null ?
-                                     "" :
-                                     String.format("Hit accuracy: %.1f%%",
-                                                   tableModel.getHitPercentageAt(rowIndex, realColumnIndex) * 100);
+                String data = tableModel.getValueAt(rowIndex, realColumnIndex) == null ?
+                              "" :
+                              String.format("<br>Value: %s<br>Hits: %d, Hit accuracy: %.1f%%",
+                                            tableModel.getValueAt(rowIndex, realColumnIndex),
+                                            tableModel.getHitsAt(rowIndex, realColumnIndex),
+                                            tableModel.getHitPercentageAt(rowIndex, realColumnIndex) * 100);
 
-                return String.format("<html>%s: %.0f, %s: %.0f<br>Value: %s<br>Hits: %d, %s",
+                return String.format("<html>%s: %.0f, %s: %.0f%s",
                                      xAxis,
                                      parser.getxValues().toArray(new Double[0])[realColumnIndex],
                                      yAxis,
                                      parser.getyValues().toArray(new Double[0])[rowIndex],
-                                     tableModel.getValueAt(rowIndex, realColumnIndex),
-                                     tableModel.getHitsAt(rowIndex, realColumnIndex),
-                                     hitAccuracy);
+                                     data);
             }
         };
         table.setRowHeight(config.getInt("table.row.height"));
@@ -290,6 +293,7 @@ public class TabPanel extends JPanel {
             double yMin = Double.parseDouble(this.yMinText.getText());
             double yMax = Double.parseDouble(this.yMaxText.getText());
             double ySpacing = Double.parseDouble(this.ySpacingText.getText());
+            Integer.parseInt(this.minHitsText.getText());
 
             if (xMin >= xMax || yMin >= yMax || xSpacing <= 0 || xSpacing > xMax || ySpacing <= 0 || ySpacing > yMax) {
                 return false;
@@ -391,7 +395,7 @@ public class TabPanel extends JPanel {
             constraints.gridy = 1;
             constraints.weighty = 1;
             constraints.weightx = 1;
-            constraints.insets = new Insets(0,16,16,16);
+            constraints.insets = new Insets(0,5,5,5);
             add(newTablePanel, constraints);
             tablePanel = newTablePanel;
             revalidate();
