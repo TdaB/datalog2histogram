@@ -3,16 +3,15 @@ package com.refinery408;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import java.awt.Component;
-import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -42,145 +41,349 @@ public class ConfigPanel extends JPanel {
     public ConfigPanel(TabPanel tabPanel, CSVParser parser) {
         this.tabPanel = tabPanel;
         this.parser = parser;
-        
-        this.button = new JButton("Generate Histogram");
-        this.button.setAlignmentX(Component.CENTER_ALIGNMENT);
-        this.button.setMnemonic(KeyEvent.VK_G);
-        this.button.addActionListener(new GenerateButtonListener());
 
-        int configRowSpacing = config.getInt("config.spacing.row");
-        this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-        this.setPreferredSize(new Dimension(config.getInt("config.width"),
-                                                        config.getInt("config.height")));
-        this.setAlignmentX(Component.CENTER_ALIGNMENT);
-        this.add(this.getXPanel());
-        this.add(Box.createRigidArea(new Dimension(0, configRowSpacing)));
-        this.add(this.getYPanel());
-        this.add(Box.createRigidArea(new Dimension(0, configRowSpacing)));
-        this.add(this.getZPanel());
-        this.add(Box.createRigidArea(new Dimension(0, configRowSpacing)));
-        this.add(this.getMinHitsPanel());
-        this.add(Box.createRigidArea(new Dimension(0, configRowSpacing)));
-        this.add(this.button);
+        this.setLayout(new GridBagLayout());
+        this.addXRow();
+        this.addYRow();
+        this.addZRow();
+        this.addMinHitsRow();
+        this.addButton();
     }
 
-    private JPanel getXPanel() {
+    private void addXRow() {
         double xMin = config.getDouble("table.axis.xmin");
         double xMax = config.getDouble("table.axis.xmax");
         double xWidth = config.getDouble("table.axis.xwidth");
 
-        JPanel xPanel = new JPanel();
-        xPanel.setLayout(new BoxLayout(xPanel, BoxLayout.LINE_AXIS));
         JLabel xAxisLabel = new JLabel("Select X axis:");
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        constraints.weighty = 0;
+        constraints.weightx = 0;
+        constraints.insets = new Insets(5, 0, 5, 5);
+        this.add(xAxisLabel, constraints);
+
         this.xCombo = new JComboBox<>(new DefaultComboBoxModel<>(this.parser.getColumnNames().toArray(new String[0])));
         this.xCombo.setSelectedIndex(0);
         this.xCombo.addActionListener(new ComboListener());
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridx = 1;
+        constraints.gridy = 0;
+        constraints.weighty = 0;
+        constraints.weightx = 0;
+        constraints.insets = new Insets(5, 0, 5, 10);
+        this.add(this.xCombo, constraints);
+
         JLabel xMinLabel = new JLabel("X min:");
-        JLabel xMaxLabel = new JLabel("X max:");
-        JLabel xSpacingLabel = new JLabel("X spacing:");
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.LINE_END;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.gridx = 2;
+        constraints.gridy = 0;
+        constraints.weighty = 0;
+        constraints.weightx = 0;
+        constraints.insets = new Insets(5, 0, 5, 5);
+        this.add(xMinLabel, constraints);
+
         this.xMinText = new JTextField(String.valueOf(xMin), 32);
         this.xMinText.addKeyListener(new TextFieldListener());
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridx = 3;
+        constraints.gridy = 0;
+        constraints.weighty = 0;
+        constraints.weightx = .5;
+        constraints.insets = new Insets(5, 0, 5, 10);
+        this.add(this.xMinText, constraints);
+
+        JLabel xMaxLabel = new JLabel("X max:");
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.LINE_END;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.gridx = 4;
+        constraints.gridy = 0;
+        constraints.weighty = 0;
+        constraints.weightx = 0;
+        constraints.insets = new Insets(5, 0, 5, 5);
+        this.add(xMaxLabel, constraints);
+
         this.xMaxText = new JTextField(String.valueOf(xMax), 32);
         this.xMaxText.addKeyListener(new TextFieldListener());
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridx = 5;
+        constraints.gridy = 0;
+        constraints.weighty = 0;
+        constraints.weightx = .5;
+        constraints.insets = new Insets(5, 0, 5, 10);
+        this.add(this.xMaxText, constraints);
+
+        JLabel xSpacingLabel = new JLabel("X spacing:");
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.LINE_END;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.gridx = 6;
+        constraints.gridy = 0;
+        constraints.weighty = 0;
+        constraints.weightx = 0;
+        constraints.insets = new Insets(5, 0, 5, 5);
+        this.add(xSpacingLabel, constraints);
+
         this.xSpacingText = new JTextField(String.valueOf(xWidth), 32);
         this.xSpacingText.addKeyListener(new TextFieldListener());
-        xPanel.add(xAxisLabel);
-        xPanel.add(Box.createRigidArea(new Dimension(5, 0)));
-        xPanel.add(this.xCombo);
-        xPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-        xPanel.add(xMinLabel);
-        xPanel.add(Box.createRigidArea(new Dimension(5, 0)));
-        xPanel.add(this.xMinText);
-        xPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-        xPanel.add(xMaxLabel);
-        xPanel.add(Box.createRigidArea(new Dimension(5, 0)));
-        xPanel.add(this.xMaxText);
-        xPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-        xPanel.add(xSpacingLabel);
-        xPanel.add(Box.createRigidArea(new Dimension(5, 0)));
-        xPanel.add(this.xSpacingText);
-        return xPanel;
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridx = 7;
+        constraints.gridy = 0;
+        constraints.weighty = 0;
+        constraints.weightx = .5;
+        constraints.insets = new Insets(5, 0, 5, 0);
+        this.add(this.xSpacingText, constraints);
     }
 
-    private JPanel getYPanel() {
+    private void addYRow() {
         double yMin = config.getDouble("table.axis.ymin");
         double yMax = config.getDouble("table.axis.ymax");
         double yWidth = config.getDouble("table.axis.ywidth");
 
-        JPanel yPanel = new JPanel();
-        yPanel.setLayout(new BoxLayout(yPanel, BoxLayout.LINE_AXIS));
         JLabel yAxisLabel = new JLabel("Select Y axis:");
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+        constraints.weighty = 0;
+        constraints.weightx = 0;
+        constraints.insets = new Insets(0, 0, 5, 5);
+        this.add(yAxisLabel, constraints);
+
         this.yCombo = new JComboBox<>(new DefaultComboBoxModel<>(this.parser.getColumnNames().toArray(new String[0])));
         this.yCombo.setSelectedIndex(1);
         this.yCombo.addActionListener(new ComboListener());
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridx = 1;
+        constraints.gridy = 1;
+        constraints.weighty = 0;
+        constraints.weightx = 0;
+        constraints.insets = new Insets(0, 0, 5, 10);
+        this.add(this.yCombo, constraints);
+
         JLabel yMinLabel = new JLabel("Y min:");
-        JLabel yMaxLabel = new JLabel("Y max:");
-        JLabel ySpacingLabel = new JLabel("Y spacing:");
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.LINE_END;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.gridx = 2;
+        constraints.gridy = 1;
+        constraints.weighty = 0;
+        constraints.weightx = 0;
+        constraints.insets = new Insets(0, 0, 5, 5);
+        this.add(yMinLabel, constraints);
+
         this.yMinText = new JTextField(String.valueOf(yMin), 32);
         this.yMinText.addKeyListener(new TextFieldListener());
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridx = 3;
+        constraints.gridy = 1;
+        constraints.weighty = 0;
+        constraints.weightx = .5;
+        constraints.insets = new Insets(0, 0, 5, 10);
+        this.add(this.yMinText, constraints);
+
+        JLabel yMaxLabel = new JLabel("Y max:");
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.LINE_END;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.gridx = 4;
+        constraints.gridy = 1;
+        constraints.weighty = 0;
+        constraints.weightx = 0;
+        constraints.insets = new Insets(0, 0, 5, 5);
+        this.add(yMaxLabel, constraints);
+
         this.yMaxText = new JTextField(String.valueOf(yMax), 32);
         this.yMaxText.addKeyListener(new TextFieldListener());
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridx = 5;
+        constraints.gridy = 1;
+        constraints.weighty = 0;
+        constraints.weightx = .5;
+        constraints.insets = new Insets(0, 0, 5, 10);
+        this.add(this.yMaxText, constraints);
+
+        JLabel ySpacingLabel = new JLabel("Y spacing:");
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.LINE_END;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.gridx = 6;
+        constraints.gridy = 1;
+        constraints.weighty = 0;
+        constraints.weightx = 0;
+        constraints.insets = new Insets(0, 0, 5, 5);
+        this.add(ySpacingLabel, constraints);
+
         this.ySpacingText = new JTextField(String.valueOf(yWidth), 32);
         this.ySpacingText.addKeyListener(new TextFieldListener());
-        yPanel.add(yAxisLabel);
-        yPanel.add(Box.createRigidArea(new Dimension(5, 0)));
-        yPanel.add(this.yCombo);
-        yPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-        yPanel.add(yMinLabel);
-        yPanel.add(Box.createRigidArea(new Dimension(5, 0)));
-        yPanel.add(this.yMinText);
-        yPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-        yPanel.add(yMaxLabel);
-        yPanel.add(Box.createRigidArea(new Dimension(5, 0)));
-        yPanel.add(this.yMaxText);
-        yPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-        yPanel.add(ySpacingLabel);
-        yPanel.add(Box.createRigidArea(new Dimension(5, 0)));
-        yPanel.add(this.ySpacingText);
-        return yPanel;
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridx = 7;
+        constraints.gridy = 1;
+        constraints.weighty = 0;
+        constraints.weightx = .5;
+        constraints.insets = new Insets(0, 0, 5, 0);
+        this.add(this.ySpacingText, constraints);
     }
 
-    private JPanel getZPanel() {
-        JPanel zPanel = new JPanel();
-        zPanel.setLayout(new BoxLayout(zPanel, BoxLayout.LINE_AXIS));
-        JLabel zLabel = new JLabel("Select Z axis:");
+    private void addZRow() {
+        JLabel zAxisLabel = new JLabel("Select Z axis:");
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridx = 0;
+        constraints.gridy = 2;
+        constraints.weighty = 0;
+        constraints.weightx = 0;
+        constraints.insets = new Insets(0, 0, 5, 5);
+        this.add(zAxisLabel, constraints);
+
         this.zCombo = new JComboBox<>(new DefaultComboBoxModel<>(this.parser.getColumnNames().toArray(new String[0])));
         this.zCombo.setSelectedIndex(2);
         this.zCombo.addActionListener(new ComboListener());
-        zPanel.add(zLabel);
-        zPanel.add(Box.createRigidArea(new Dimension(5, 0)));
-        zPanel.add(this.zCombo);
-        zPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-        zPanel.add(new JLabel("Z neutral:"));
-        zPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridx = 1;
+        constraints.gridy = 2;
+        constraints.weighty = 0;
+        constraints.weightx = 0;
+        constraints.insets = new Insets(0, 0, 5, 10);
+        this.add(this.zCombo, constraints);
+
+        JLabel zNeutralLabel = new JLabel("Z neutral:");
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.LINE_END;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.gridx = 2;
+        constraints.gridy = 2;
+        constraints.weighty = 0;
+        constraints.weightx = 0;
+        constraints.insets = new Insets(0, 0, 5, 5);
+        this.add(zNeutralLabel, constraints);
+
         this.neutralText = new JTextField("0", 32);
         this.neutralText.addKeyListener(new TextFieldListener());
-        zPanel.add(this.neutralText);
-        zPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-        zPanel.add(new JLabel("Z high:"));
-        zPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridx = 3;
+        constraints.gridy = 2;
+        constraints.weighty = 0;
+        constraints.weightx = .5;
+        constraints.insets = new Insets(0, 0, 5, 10);
+        this.add(this.neutralText, constraints);
+
+        JLabel zHighLabel = new JLabel("Z high:");
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.LINE_END;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.gridx = 4;
+        constraints.gridy = 2;
+        constraints.weighty = 0;
+        constraints.weightx = 0;
+        constraints.insets = new Insets(0, 0, 5, 5);
+        this.add(zHighLabel, constraints);
+
         this.highText = new JTextField(32);
         this.highText.addKeyListener(new TextFieldListener());
-        zPanel.add(this.highText);
-        zPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-        zPanel.add(new JLabel("Z low:"));
-        zPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridx = 5;
+        constraints.gridy = 2;
+        constraints.weighty = 0;
+        constraints.weightx = .5;
+        constraints.insets = new Insets(0, 0, 5, 10);
+        this.add(this.highText, constraints);
+
+        JLabel zLowLabel = new JLabel("Z low:");
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.LINE_END;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.gridx = 6;
+        constraints.gridy = 2;
+        constraints.weighty = 0;
+        constraints.weightx = 0;
+        constraints.insets = new Insets(0, 0, 5, 5);
+        this.add(zLowLabel, constraints);
+
         this.lowText = new JTextField(32);
         this.lowText.addKeyListener(new TextFieldListener());
-        zPanel.add(this.lowText);
-        return zPanel;
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridx = 7;
+        constraints.gridy = 2;
+        constraints.weighty = 0;
+        constraints.weightx = .5;
+        constraints.insets = new Insets(0, 0, 5, 0);
+        this.add(this.lowText, constraints);
     }
 
-    private JPanel getMinHitsPanel() {
-        JPanel minHitsPanel = new JPanel();
-        minHitsPanel.setLayout(new BoxLayout(minHitsPanel, BoxLayout.LINE_AXIS));
+    private void addMinHitsRow() {
         JLabel label = new JLabel("Show cells with hits >");
-        minHitsPanel.add(label);
-        minHitsPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.LINE_END;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.gridx = 0;
+        constraints.gridy = 3;
+        constraints.gridwidth = 4;
+        constraints.weighty = 0;
+        constraints.weightx = .5;
+        constraints.insets = new Insets(0, 0, 5, 5);
+        this.add(label, constraints);
+
         this.minHitsText = new JTextField("0", 32);
         this.minHitsText.addKeyListener(new TextFieldListener());
-        minHitsPanel.add(this.minHitsText);
-        return minHitsPanel;
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridx = 4;
+        constraints.gridy = 3;
+        constraints.gridwidth = 2;
+        constraints.weighty = 0;
+        constraints.weightx = .5;
+        constraints.insets = new Insets(0, 0, 5, 10);
+        this.add(this.minHitsText, constraints);
+    }
+
+    private void addButton() {
+        this.button = new JButton("Generate Histogram");
+        this.button.setMnemonic(KeyEvent.VK_G);
+        this.button.addActionListener(new GenerateButtonListener());
+
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.gridx = 0;
+        constraints.gridy = 4;
+        constraints.gridwidth = 8;
+        constraints.weighty = 0;
+        constraints.weightx = 0;
+        this.add(this.button, constraints);
     }
 
     private boolean readyToGenerate() {

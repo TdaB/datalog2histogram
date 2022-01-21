@@ -48,8 +48,9 @@ public class App {
         this.frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.frame.setTitle("Da Bomb Histogram");
         this.frame.pack();
-        this.frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.frame.setVisible(true);
+        this.frame.setSize(config.getInt("window.width"), config.getInt("window.height"));
+        this.frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
 
     private static String getFilePath() {

@@ -4,6 +4,7 @@ import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
 import javax.swing.AbstractListModel;
+import javax.swing.BorderFactory;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -64,6 +65,7 @@ public class TablePanel extends JPanel {
 
         this.setLayout(new GridLayout(1, 1));
         this.add(scrollPane);
+        this.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     }
 
     private JList<Double> buildRowHeader(final JTable table) {
