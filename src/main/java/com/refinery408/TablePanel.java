@@ -26,7 +26,8 @@ public class TablePanel extends JPanel {
         HistogramTableModel tableModel = new HistogramTableModel(parser.getData(),
                                                                  parser.getxValues(),
                                                                  parser.getyValues(),
-                                                                 tableConfig.getMinHits());
+                                                                 tableConfig.getMinHits(),
+                                                                 tableConfig.getZPrecision());
 
         JTable table = new JTable(tableModel) {
             @Override

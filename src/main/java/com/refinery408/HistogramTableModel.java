@@ -1,15 +1,11 @@
 package com.refinery408;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.swing.table.AbstractTableModel;
 import java.awt.Color;
 import java.util.Map;
 import java.util.Set;
 
 public class HistogramTableModel extends AbstractTableModel {
-    private static final Logger log = LoggerFactory.getLogger(HistogramTableModel.class);
     private final Map<Point, CellData> data;
     private Set<Double> xLabels;
     private Set<Double> yLabels;
@@ -17,9 +13,10 @@ public class HistogramTableModel extends AbstractTableModel {
     private Double[][] hitPercentages;
     private Integer[][] hits;
     private Color[][] colors;
-    private int minHits;
+    private final int minHits;
+    private final int zPrecision;
 
-    public HistogramTableModel(Map<Point, CellData> data, Set<Double> xLabels, Set<Double> yLabels, int minHits) {
+    public HistogramTableModel(Map<Point, CellData> data, Set<Double> xLabels, Set<Double> yLabels, int minHits, int zPrecision) {
         this.data = data;
         this.xLabels = xLabels;
         this.yLabels = yLabels;
@@ -28,6 +25,7 @@ public class HistogramTableModel extends AbstractTableModel {
         this.hits = new Integer[this.yLabels.size()][this.xLabels.size()];
         this.colors = new Color[this.yLabels.size()][this.xLabels.size()];
         this.minHits = minHits;
+        this.zPrecision = zPrecision;
         this.populateMatrices();
     }
 
@@ -50,7 +48,13 @@ public class HistogramTableModel extends AbstractTableModel {
     public Object getValueAt(int row, int col) {
         Double value = this.averages[row][col];
         Integer hits = this.hits[row][col];
-        return value == null || hits < this.minHits ? null : String.format("%5.3f", value);
+        if (value == null || hits < this.minHits) {
+            return null;
+        }
+        String specifier = String.format("%%.%df", this.zPrecision);
+        String formattedValue = String.format(specifier, value);
+        String zero = String.format(specifier, 0.0);
+        return formattedValue.equals(zero) || formattedValue.equals("-" + zero) ? "0" : formattedValue;
     }
 
     public Integer getHitsAt(int row, int col) {

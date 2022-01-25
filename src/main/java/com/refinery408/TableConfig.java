@@ -21,4 +21,5 @@ public class TableConfig {
     private final Double zHigh;
     private final Double zLow;
     private final Integer minHits;
+    private final Integer zPrecision;
 }

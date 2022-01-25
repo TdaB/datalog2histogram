@@ -3,12 +3,15 @@ package com.refinery408;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -36,6 +39,7 @@ public class ConfigPanel extends JPanel {
     private JTextField highText;
     private JTextField lowText;
     private JTextField minHitsText;
+    private JTextField zPrecisionText;
     private JButton button;
 
     public ConfigPanel(TabPanel tabPanel, CSVParser parser) {
@@ -46,7 +50,7 @@ public class ConfigPanel extends JPanel {
         this.addXRow();
         this.addYRow();
         this.addZRow();
-        this.addMinHitsRow();
+        this.addRow4();
         this.addButton();
     }
 
@@ -343,31 +347,37 @@ public class ConfigPanel extends JPanel {
         this.add(this.lowText, constraints);
     }
 
-    private void addMinHitsRow() {
-        JLabel label = new JLabel("Show cells with hits >");
-        GridBagConstraints constraints = new GridBagConstraints();
-        constraints.anchor = GridBagConstraints.LINE_END;
-        constraints.fill = GridBagConstraints.NONE;
-        constraints.gridx = 0;
-        constraints.gridy = 3;
-        constraints.gridwidth = 4;
-        constraints.weighty = 0;
-        constraints.weightx = .5;
-        constraints.insets = new Insets(0, 0, 5, 5);
-        this.add(label, constraints);
+    private void addRow4() {
+        JPanel row4Panel = new JPanel();
+        row4Panel.setLayout(new BoxLayout(row4Panel, BoxLayout.LINE_AXIS));
+
+        JLabel minHitsLabel = new JLabel("Show cells with hits >");
+        row4Panel.add(minHitsLabel);
+        row4Panel.add(Box.createRigidArea(new Dimension(5, 0)));
 
         this.minHitsText = new JTextField("0", 32);
         this.minHitsText.addKeyListener(new TextFieldListener());
-        constraints = new GridBagConstraints();
-        constraints.anchor = GridBagConstraints.CENTER;
+        row4Panel.add(this.minHitsText);
+        row4Panel.add(Box.createRigidArea(new Dimension(10, 0)));
+
+        JLabel zPrecisionLabel = new JLabel("Number precision:");
+        row4Panel.add(zPrecisionLabel);
+        row4Panel.add(Box.createRigidArea(new Dimension(5, 0)));
+
+        this.zPrecisionText = new JTextField("3", 32);
+        this.zPrecisionText.addKeyListener(new TextFieldListener());
+        row4Panel.add(this.zPrecisionText);
+
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.LINE_END;
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.gridx = 4;
+        constraints.gridx = 0;
         constraints.gridy = 3;
-        constraints.gridwidth = 2;
+        constraints.gridwidth = 8;
         constraints.weighty = 0;
-        constraints.weightx = .5;
-        constraints.insets = new Insets(0, 0, 5, 10);
-        this.add(this.minHitsText, constraints);
+        constraints.weightx = 0;
+        constraints.insets = new Insets(0, 0, 5, 0);
+        this.add(row4Panel, constraints);
     }
 
     private void addButton() {
@@ -400,8 +410,15 @@ public class ConfigPanel extends JPanel {
             double yMax = Double.parseDouble(this.yMaxText.getText());
             double ySpacing = Double.parseDouble(this.ySpacingText.getText());
             Integer.parseInt(this.minHitsText.getText());
+            int zPrecision = Integer.parseInt(this.zPrecisionText.getText());
 
-            if (xMin >= xMax || yMin >= yMax || xSpacing <= 0 || xSpacing > xMax || ySpacing <= 0 || ySpacing > yMax) {
+            if (xMin >= xMax ||
+                yMin >= yMax ||
+                xSpacing <= 0 ||
+                xSpacing > xMax ||
+                ySpacing <= 0 ||
+                ySpacing > yMax ||
+                zPrecision < 0) {
                 return false;
             }
 
@@ -471,7 +488,8 @@ public class ConfigPanel extends JPanel {
                                                           neutral,
                                                           high,
                                                           low,
-                                                          Integer.parseInt(minHitsText.getText()));
+                                                          Integer.parseInt(minHitsText.getText()),
+                                                          Integer.parseInt(zPrecisionText.getText()));
                 tabPanel.replaceTablePanel(new TablePanel(parser, tableConfig));
             } catch (Exception ex) {
                 ex.printStackTrace();
