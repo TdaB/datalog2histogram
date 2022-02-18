@@ -1,10 +1,5 @@
 package com.refinery408;
 
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -16,13 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.regex.Pattern;
 
 public class CSVParser {
-    private static final Logger log = LoggerFactory.getLogger(CSVParser.class);
-    private static final Config config = ConfigFactory.defaultApplication();
-    private final String filePath;
-    private final String fileName;
+    private final File file;
     private String delimiter;
     private List<String> columnNames = new ArrayList<>();
     private Map<Point, CellData> table;
@@ -34,14 +25,20 @@ public class CSVParser {
         if (filePath == null || filePath.isEmpty()) {
             throw new RuntimeException("File path was not provided to CSV parser");
         }
-        this.filePath = filePath;
+        this.file = new File(filePath);
         this.parseHeader();
-        String[] splitPath = filePath.split(Pattern.quote(File.separator));
-        this.fileName = splitPath[splitPath.length - 1];
+    }
+
+    public CSVParser(File file) throws Exception {
+        if (file == null || !file.exists()) {
+            throw new RuntimeException("File was not provided to CSV parser");
+        }
+        this.file = file;
+        this.parseHeader();
     }
 
     private void parseHeader() throws Exception {
-        try (BufferedReader br = new BufferedReader(new FileReader(this.filePath))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(this.file))) {
             for (String line; (line = br.readLine()) != null; ) {
                 for (String delimiter : DELIMITERS) {
                     String[] parts = line.split(delimiter);
@@ -74,7 +71,7 @@ public class CSVParser {
     }
 
     public String getFileName() {
-        return fileName;
+        return this.file.getName();
     }
 
     protected void parseCsv(TableConfig tableConfig) throws Exception {
@@ -93,7 +90,7 @@ public class CSVParser {
         int yIndex = this.columnNames.indexOf(tableConfig.getYLabel());
         int zIndex = this.columnNames.indexOf(tableConfig.getZLabel());
 
-        try (BufferedReader br = new BufferedReader(new FileReader(this.filePath))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(this.file))) {
             boolean firstLine = true;
             for (String line; (line = br.readLine()) != null; ) {
                 if (firstLine) {
